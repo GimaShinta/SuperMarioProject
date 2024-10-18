@@ -1,0 +1,1 @@
+#include "Hatena.h"
