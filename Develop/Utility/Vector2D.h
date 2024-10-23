@@ -96,5 +96,8 @@ public:
 
 	// 2点間の距離
 	static float Distance(const Vector2D& a, const Vector2D& b);
+
+	//整数値にキャストする
+	void ToInt(int* x, int* y);
 };
 

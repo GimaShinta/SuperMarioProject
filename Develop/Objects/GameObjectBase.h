@@ -38,7 +38,7 @@ public:
 public:
 	void SetOwnerScene(class GameObjectManager* scene);
 	void SetLocation(const Vector2D& location);
-	const Vector2D& GetLocation()const;
+	Vector2D& GetLocation();
 	const Collision& GetCollision()const;
 	const unsigned char GetZLayer()const;
 	const bool GetMobility()const;

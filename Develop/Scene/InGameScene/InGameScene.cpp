@@ -68,7 +68,7 @@ void InGameScene::CheckCollision(GameObjectBase* target, GameObjectBase* partner
 void InGameScene::LoadStageMapCSV()
 {
 	GameObjectManager* obj_manager = Singleton<GameObjectManager>::GetInstance();
-	Vector2D generate_location = (640.0f, 600.0f);
+	Vector2D generate_location = Vector2D(640.0f, 600.0f);
 	player = obj_manager->CreateObject<Player>(generate_location);
 }
 

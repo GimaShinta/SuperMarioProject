@@ -14,7 +14,6 @@ private:
 	std::vector<GameObjectBase*> game_object;
 	Vector2D screen_offset;
 
-	//ƒGƒ‰[‚ª‚í‚©‚ç‚ñ
 public:
 	GameObjectManager();
 	virtual ~GameObjectManager();

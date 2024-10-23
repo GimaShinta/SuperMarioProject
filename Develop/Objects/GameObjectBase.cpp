@@ -52,7 +52,7 @@ void GameObjectBase::SetLocation(const Vector2D& location)
 	this->location = location;
 }
 
-const Vector2D& GameObjectBase::GetLocation() const
+Vector2D& GameObjectBase::GetLocation()
 {
 	return location;
 }

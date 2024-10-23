@@ -3,6 +3,8 @@
 #include "../CharacterBase.h"
 #include <vector>
 
+#include "State/Enum/PlayerState.h"
+
 enum ePlayerLooksState
 {
 	NOMALMARIO,
@@ -28,8 +30,11 @@ public:
 	int coin_count;
 	bool is_star;
 	bool is_destroy;
+	Vector2D box_size = (0.0f);
 
 private:
+	class PlayerStateBase* state = nullptr;
+	ePlayerState next_state = ePlayerState::NONE;
 	ePlayerLooksState old_state;
 
 private:
@@ -46,7 +51,6 @@ public:
 	~Player();
 
 public:
-public:
 	void Initialize() override;
 	void Update(float delata_second) override;
 	void Draw(const Vector2D& screen_offset)const override;
@@ -58,5 +62,6 @@ public:
 	void SetPowerDown();
 	bool GetDestroy()const;
 	void AnimationControl(float delta_second);
+	void SetNextState(ePlayerState next_state);
 };
 
