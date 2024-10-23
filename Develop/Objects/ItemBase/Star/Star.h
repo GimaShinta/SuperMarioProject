@@ -1,7 +1,7 @@
-#pragma once
-#include "../ItemBase.h"
-
-class Star : public ItemBase
-{
-};
-
+//#pragma once
+//#include "../ItemBase.h"
+//
+//class Star : public ItemBase
+//{
+//};
+//

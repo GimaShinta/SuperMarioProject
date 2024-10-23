@@ -2,37 +2,45 @@
 
 #include "../Utility/Vector2D.h"
 #include "../Utility/Collision.h"
-#include "GameObjectManager.h"
 
+#define D_OBJECT_SIZE	(24.0f)			// オブジェクトサイズ
+
+//オブジェクトベースクラス
 class GameObjectBase
 {
 protected:
-	Vector2D location;
-	Collision collision;
-	unsigned char z_layer;
+	class GameObjectManager* owner_scene;   //
+	Vector2D location;              //
+	Collision collision;            //
+	unsigned char z_layer;          //
 
 protected:
-	int image;
-	int animation_count;
-	float animation_time;
+	int image;                      //
+	int animation_count;            //
+	float animation_time;           //
 
 public:
-	bool is_mobility;
+	bool is_mobility;               //
+
+public:
+	GameObjectBase();
+	virtual ~GameObjectBase();
 
 public:
 	virtual void Initialize();
 	virtual void Update(float delata_second);
-	virtual void Draw(const Vector2D location)const;
+	virtual void Draw(const Vector2D& screen_offset)const;
 	virtual void Finalize();
 
 public:
-	virtual void OnHitCollision(GameObjectBase* object);
+	virtual void OnHitCollision(GameObjectBase* hit_object);
 
 public:
-	const Vector2D& GetLocation();
-	void SetLocation(const Vector2D&);
+	void SetOwnerScene(class GameObjectManager* scene);
+	void SetLocation(const Vector2D& location);
+	const Vector2D& GetLocation()const;
 	const Collision& GetCollision()const;
-	const unsigned char GetZlayer()const;
+	const unsigned char GetZLayer()const;
 	const bool GetMobility()const;
 };
 

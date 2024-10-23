@@ -1,6 +1,21 @@
 #include "ResourceManager.h"
 #include "DxLib.h"
 
+// 静的メンバ変数定義
+//ResourceManager* ResourceManager::instance = nullptr;
+
+void ResourceManager::DeleteInstance()
+{
+	static ResourceManager* instance = nullptr;
+
+	// インスタンスが存在している場合、削除する
+	if (instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+}
+
 /// <summary>
 /// 画像取得処理
 /// </summary>

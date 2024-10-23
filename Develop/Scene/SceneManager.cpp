@@ -9,12 +9,24 @@
 
 #include "DxLib.h"
 
-SceneManager::SceneManager()
+SceneManager::SceneManager():current_scene(nullptr)
 {
 }
 
 SceneManager::~SceneManager()
 {
+}
+
+void SceneManager::DeleteInstance()
+{
+	static SceneManager* instance = nullptr;
+
+	// インスタンスが存在している場合、削除する
+	if (instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
 }
 
 void SceneManager::Initialize()
@@ -27,14 +39,14 @@ bool SceneManager::Update(float delta_second)
 	InputManager* input = Singleton<InputManager>::GetInstance();
 
 	// シーンの更新
-	Application* app;
+	Application* app = Singleton<Application>::GetInstance();
 	eSceneType next_scene_type = current_scene->Update(app->GetDeltaSecond());
 
 	// ゲームを終了するか確認する
-	if ((next_scene_type == eSceneType::eXit) ||
-		(input->GetButtonUp(XINPUT_BUTTON_BACK)) ||
-		(input->GetKeyUp(KEY_INPUT_ESCAPE)))
+	if (next_scene_type == eSceneType::eXit ||
+		input->GetKeyUp(KEY_INPUT_ESCAPE))
 	{
+		//エンドチェック（終了する）
 		return true;
 	}
 
@@ -44,6 +56,9 @@ bool SceneManager::Update(float delta_second)
 		// シーン切り替え処理
 		ChangeScene(next_scene_type);
 	}
+
+	//エンドチェック（終了しない）
+	return false;
 }
 
 void SceneManager::Draw()

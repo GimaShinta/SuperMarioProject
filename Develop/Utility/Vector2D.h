@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../Singleton.h"
-
-class Vector2D : public Singleton<class T>
+class Vector2D 
 {
 public:
 	float x;

@@ -1,7 +1,7 @@
-#pragma once
-#include "../ItemBase"
-
-class Coin : public ItemBase
-{
-};
-
+//#pragma once
+//#include "../ItemBase"
+//
+//class Coin : public ItemBase
+//{
+//};
+//

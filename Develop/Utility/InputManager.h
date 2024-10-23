@@ -9,16 +9,19 @@
 
 enum eInputState
 {
-	eNone,
-	ePressed,
-	eRelease,
-	eHeld
+	None,
+	Pressed,
+	Release,
+	Held
 };
 
 class InputManager : public Singleton<class T>
 {
 private:
+	// 自クラスのポインタ（実体をアドレスの先で保有）
+	static InputManager* instance;
 
+private:
 	// キー入力情報
 	char now_key[D_KEYCODE_MAX];		// 現在の入力値
 	char old_key[D_KEYCODE_MAX];		// 前回の入力値
@@ -32,6 +35,8 @@ private:
 public:
 	InputManager();
 	~InputManager();
+
+	static void DeleteInstance();
 
 public:
 	/// <summary>
@@ -100,13 +105,13 @@ public:
 	/// 左スティック入力状態取得
 	/// </summary>
 	/// <returns>左スティック入力状態(-1.0f～1.0f)</returns>
-	Vector2D GetLeftStick() const;
+	//Vector2D GetLeftStick() const;
 
 	/// <summary>
 	/// 右スティック入力状態取得
 	/// </summary>
 	/// <returns>右スティック入力状態(-1.0f～1.0f)</returns>
-	Vector2D GetRightStick() const;
+	//Vector2D GetRightStick() const;
 
 private:
 	/// <summary>

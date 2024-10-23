@@ -1,7 +1,7 @@
-#pragma once
-#include "../ItemBase.h"
-
-class Mushroom : public ItemBase
-{
-};
-
+//#pragma once
+//#include "../ItemBase.h"
+//
+//class Mushroom : public ItemBase
+//{
+//};
+//

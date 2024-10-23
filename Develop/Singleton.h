@@ -4,6 +4,7 @@ template <class T>
 class Singleton
 {
 protected:
+
 	// クラスの実体をメンバ関数内でしか生成できないようにする
 	Singleton() = default;
 
@@ -15,14 +16,17 @@ protected:
 	~Singleton() = default;
 
 public:
+	//インスタンスの取得
 	static T* GetInstance();
-	static T* DeleteInstance();
 
 };
 
+//インスタンスの取得
 template<class T>
 inline T* Singleton<T>::GetInstance()
 {
+	static T* instance = nullptr;
+
 	// インスタンスが生成されていない場合、生成する
 	if (instance == nullptr)
 	{
@@ -31,15 +35,4 @@ inline T* Singleton<T>::GetInstance()
 
 	// インスタンスのポインタを返却する
 	return instance;
-}
-
-template<class T>
-inline T* Singleton<T>::DeleteInstance()
-{
-	// インスタンスが存在している場合、削除する
-	if (instance != nullptr)
-	{
-		delete instance;
-		instance = nullptr;
-	}
 }

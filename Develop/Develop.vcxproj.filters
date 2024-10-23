@@ -48,9 +48,6 @@
     <ClCompile Include="Objects\GameObjectBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\GameObjectManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Application.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -109,6 +106,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Objects\CharacterBase\Player\State\Factory\PlayerStateFactory.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\GameObjectManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

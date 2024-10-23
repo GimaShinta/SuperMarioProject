@@ -1,7 +1,7 @@
-#pragma once
-#include "../GameObjectBase.h"
-
-class ItemBase : public GameObjectBase
-{
-};
-
+//#pragma once
+//#include "../GameObjectBase.h"
+//
+//class ItemBase : public GameObjectBase
+//{
+//};
+//

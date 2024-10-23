@@ -20,7 +20,7 @@ public:
 
 public:
 	void Initialize();
-	eSceneType Update(const float& delta_second);
+	eSceneType Update(float delta_second)override;
 	void Draw();
 	void Finalize();
 

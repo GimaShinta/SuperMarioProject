@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../CharacterBase.h"
+#include <vector>
 
 enum ePlayerLooksState
 {
@@ -32,12 +33,24 @@ private:
 	ePlayerLooksState old_state;
 
 private:
-	int nomalmario_num[];
-	int s_nomalmario_num[];
-	int growthmario_num[];
-	int dekamario_num[];
-	int s_dekamario_num[];
-	int firemario_num[];
+	//ëΩï™StateÇ≈èëÇ≠
+	int nomalmario_num[3];
+	int s_nomalmario_num[2];
+	int growthmario_num[2];
+	int dekamario_num[2];
+	int s_dekamario_num[2];
+	int firemario_num[2];
+
+public:
+	Player();
+	~Player();
+
+public:
+public:
+	void Initialize() override;
+	void Update(float delata_second) override;
+	void Draw(const Vector2D& screen_offset)const override;
+	void Finalize() override;
 
 public:
 	int GetZanki();

@@ -3,15 +3,18 @@
 #include "../Singleton.h"
 #include "SceneBase.h"
 
+//シーンマネージャークラス
 class SceneManager : public Singleton<class T>
 {
+private:
+	SceneBase* current_scene;
 
 public:
 	SceneManager();
 	~SceneManager();
 
-private:
-	SceneBase* current_scene;
+public:
+	static void DeleteInstance();
 
 public:
 	void Initialize();

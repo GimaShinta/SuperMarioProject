@@ -1,5 +1,10 @@
 #include "InputManager.h"
+#include "../Singleton.h"
 #include "DxLib.h"
+
+// 静的メンバ変数定義
+InputManager* InputManager::instance = nullptr;
+
 
 InputManager::InputManager()
 {
@@ -7,6 +12,18 @@ InputManager::InputManager()
 
 InputManager::~InputManager()
 {
+}
+
+void InputManager::DeleteInstance()
+{
+	static InputManager* instance = nullptr;
+
+	// インスタンスが存在している場合、削除する
+	if (instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
 }
 
 /// <summary>

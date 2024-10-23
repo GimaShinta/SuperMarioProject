@@ -1,1 +1,1 @@
-#include "Hatena.h"
+//#include "Hatena.h"

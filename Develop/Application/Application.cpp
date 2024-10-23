@@ -79,10 +79,10 @@ void Application::Run()
 		// 描画処理
 		Graph();
 
-		//シーンの切り替えとゲームの終了チェック
+		//シーンの切り替えとエンドチェック
 		end_check = scene->Update(delta_second);
 
-		//ゲームを終了するか確認する
+		//ゲームを終了するか確認
 		if (end_check == true)
 		{
 			break;

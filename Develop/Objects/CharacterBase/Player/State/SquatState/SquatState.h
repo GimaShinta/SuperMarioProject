@@ -1,8 +1,8 @@
-#pragma once
-
-#include "../PlayerStateBase.h"
-
-class SquatState : public PlayerStateBase
-{
-};
-
+//#pragma once
+//
+//#include "../PlayerStateBase.h"
+//
+//class SquatState : public PlayerStateBase
+//{
+//};
+//

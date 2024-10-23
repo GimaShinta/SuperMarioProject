@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Objects/GameObjectManager.h"
+
 enum class eSceneType
 {
 	eTitle,
@@ -16,7 +18,11 @@ public:
 	{
 		return GetNowSceneType();
 	}
-	virtual void Draw() {}
+	virtual void Draw()
+	{
+		GameObjectManager* obj_manager = Singleton<GameObjectManager>::GetInstance();
+		obj_manager->Draw();
+	}
 	virtual void Finalize() {}
 
 public:
