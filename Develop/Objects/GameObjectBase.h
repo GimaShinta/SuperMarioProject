@@ -11,8 +11,11 @@ class GameObjectBase
 protected:
 	class GameObjectManager* owner_scene;   //
 	Vector2D location;              //
-	Collision collision;            //
+	BoxCollision collision;            //
 	unsigned char z_layer;          //
+
+public:
+	Vector2D box_size;
 
 protected:
 	int image;                      //
@@ -39,8 +42,9 @@ public:
 	void SetOwnerScene(class GameObjectManager* scene);
 	void SetLocation(const Vector2D& location);
 	Vector2D& GetLocation();
-	const Collision& GetCollision()const;
+	Vector2D& GetBoxSize();
+	const BoxCollision& GetCollision()const;
 	const unsigned char GetZLayer()const;
-	const bool GetMobility()const;
+	const bool& GetMobility()const;
 };
 

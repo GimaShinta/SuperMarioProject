@@ -57,7 +57,7 @@ void IdleState::Draw() const
 	DrawBox(x - (int)(player->box_size.x), y - (int)(player->box_size.y), 
 		x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
 
-	DrawString(0, 150, "プレイヤー停止中", GetColor(255, 255, 255), TRUE);
+	DrawString(200, 120, "プレイヤー停止中", GetColor(255, 255, 255), TRUE);
 }
 
 void IdleState::Finalize()

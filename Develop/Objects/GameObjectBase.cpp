@@ -57,7 +57,12 @@ Vector2D& GameObjectBase::GetLocation()
 	return location;
 }
 
-const Collision& GameObjectBase::GetCollision() const
+Vector2D& GameObjectBase::GetBoxSize()
+{
+	return box_size;
+}
+
+const BoxCollision& GameObjectBase::GetCollision() const
 {
 	return collision;
 }
@@ -67,7 +72,7 @@ const unsigned char GameObjectBase::GetZLayer() const
 	return z_layer;
 }
 
-const bool GameObjectBase::GetMobility() const
+const bool& GameObjectBase::GetMobility() const
 {
 	return is_mobility;
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+//シングルトンテンプレートクラス
 template <class T>
 class Singleton
 {
@@ -25,6 +26,7 @@ public:
 template<class T>
 inline T* Singleton<T>::GetInstance()
 {
+	// 自クラスのポインタ（実体をアドレスの先で保有）
 	static T* instance = nullptr;
 
 	// インスタンスが生成されていない場合、生成する

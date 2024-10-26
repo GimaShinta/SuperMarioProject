@@ -15,24 +15,28 @@ RunState::~RunState()
 {
 }
 
+//初期化処理
 void RunState::Initialize()
 {
 	//Boxサイズを設定
 	player->box_size = Vector2D(32.0f);
 }
 
+//更新処理
 void RunState::Update()
 {
+	//インスタンスの取得
 	InputManager* input = Singleton<InputManager>::GetInstance();
 
+	//移動処理
 	if (input->GetKey(KEY_INPUT_LEFT))
 	{
-		this->player->velocity.x -= 0.5f;         //ジャンプ力
+		this->player->velocity.x -= 0.5f;
 		old_location = 0.0f;
 	}
 	else if (input->GetKey(KEY_INPUT_RIGHT))
 	{
-		this->player->velocity.x += 0.5f;         //ジャンプ力
+		this->player->velocity.x += 0.5f;
 		old_location = 0.0f;
 	}
 
@@ -59,6 +63,7 @@ void RunState::Update()
 	old_location = player->GetLocation();
 }
 
+//描画処理
 void RunState::Draw() const
 {
 	//座標情報を整数値に変換
@@ -69,18 +74,21 @@ void RunState::Draw() const
 	DrawBox(x - (int)(player->box_size.x), y - (int)(player->box_size.y),
 		x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
 
-	DrawString(0, 150, "プレイヤー移動中", GetColor(255, 255, 255), TRUE);
+	DrawString(200, 120, "プレイヤー移動中", GetColor(255, 255, 255), TRUE);
 }
 
+//終了時処理
 void RunState::Finalize()
 {
 }
 
+//現在の見た目の状態を取得
 ePlayerLooksState RunState::GetLooksState() const
 {
 	return ePlayerLooksState();
 }
 
+//現在の動きの状態を取得
 ePlayerState RunState::GetState() const
 {
 	return ePlayerState::RUN;

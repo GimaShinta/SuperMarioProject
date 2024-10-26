@@ -20,6 +20,7 @@ Application::~Application()
 	ShutDown();
 }
 
+//初期化処理
 void Application::WakeUp()
 {
 	// ウィンドウモードで起動する
@@ -47,6 +48,7 @@ void Application::WakeUp()
 		throw std::string("Dxライブラリの初期化に失敗しました！\n");
 	}
 
+	//シーン情報を取得する
 	SceneManager* scene = Singleton<SceneManager>::GetInstance();
 
 	// 描画先を表画面に反映する
@@ -60,11 +62,13 @@ void Application::WakeUp()
 
 }
 
+//更新処理
 void Application::Run()
 {
 	// 入力情報を取得する
 	InputManager* input = Singleton<InputManager>::GetInstance();
 
+	//シーン情報を取得する
 	SceneManager* scene = Singleton<SceneManager>::GetInstance();
 
 	// メインループ
@@ -90,6 +94,7 @@ void Application::Run()
 	}
 }
 
+//終了時処理
 void Application::ShutDown()
 {
 	// Singletonのインスタンスを解放する
@@ -101,8 +106,10 @@ void Application::ShutDown()
 	DxLib_End();
 }
 
+//描画処理
 void Application::Graph() const
 {
+	//シーン情報を取得する
 	SceneManager* scene = Singleton<SceneManager>::GetInstance();
 
 	// 画面の初期化
@@ -115,6 +122,7 @@ void Application::Graph() const
 	ScreenFlip();
 }
 
+// フレームレートの制御
 void Application::FreamControl()
 {
 	// 現在時間の取得（μ秒）
@@ -137,11 +145,13 @@ void Application::FreamControl()
 	}
 }
 
+//１フレーム当たりの時間を取得
 const float& Application::GetDeltaSecond()
 {
 	return delta_second;
 }
 
+//エラー内容の書き込み
 int Application::ErrorThrow(std::string error_log)
 {
 	// Log.txtにエラー内容を追加する

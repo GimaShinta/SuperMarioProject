@@ -15,6 +15,7 @@ SquatState::~SquatState()
 {
 }
 
+//初期化処理
 void SquatState::Initialize()
 {
 	//Boxサイズを設定
@@ -24,8 +25,10 @@ void SquatState::Initialize()
 	player->velocity = 0.0f;
 }
 
+//更新処理
 void SquatState::Update()
 {
+	//インスタンスの取得
 	InputManager* input = Singleton<InputManager>::GetInstance();
 
 	//移動状態に遷移
@@ -48,6 +51,7 @@ void SquatState::Update()
 	}
 }
 
+//描画処理
 void SquatState::Draw() const
 {
 	//座標情報を整数値に変換
@@ -58,18 +62,21 @@ void SquatState::Draw() const
 	DrawBox(x - (int)(player->box_size.x), y - (int)(player->box_size.y - 24.0f),
 		x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
 
-	DrawString(0, 150, "プレイヤーしゃがみ中", GetColor(255, 255, 255), TRUE);
+	DrawString(200, 120, "プレイヤーしゃがみ中", GetColor(255, 255, 255), TRUE);
 }
 
+//終了時処理
 void SquatState::Finalize()
 {
 }
 
+//現在の見た目の状態を取得
 ePlayerLooksState SquatState::GetLooksState() const
 {
 	return ePlayerLooksState();
 }
 
+//現在の動きの状態を取得
 ePlayerState SquatState::GetState() const
 {
 	return ePlayerState();

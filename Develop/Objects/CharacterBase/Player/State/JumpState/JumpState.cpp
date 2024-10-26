@@ -20,12 +20,14 @@ void JumpState::Initialize()
 	//Boxサイズを設定
 	player->box_size = Vector2D(32.0f);
 
+	//移動処理
 	this->player->velocity.y -= 15.0f;         //ジャンプ力
 	old_location = 0.0f;
 }
 
 void JumpState::Update()
 {
+	//インスタンスの取得
 	InputManager* input = Singleton<InputManager>::GetInstance();
 
 	//移動状態に遷移
@@ -61,7 +63,7 @@ void JumpState::Draw() const
 	DrawBox(x - (int)(player->box_size.x), y - (int)(player->box_size.y),
 		x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
 
-	DrawString(0, 150, "プレイヤージャンプ中", GetColor(255, 255, 255), TRUE);
+	DrawString(200, 120, "プレイヤージャンプ中", GetColor(255, 255, 255), TRUE);
 }
 
 void JumpState::Finalize()

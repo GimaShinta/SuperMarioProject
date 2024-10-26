@@ -111,6 +111,15 @@
     <ClCompile Include="Objects\GameObjectManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\CharacterBase\EnemyBase\Nokonoko\Nokonoko.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\CharacterBase\EnemyBase\Kuribo\Kuribo.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\CharacterBase\EnemyBase\EnemyBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utility\Vector2D.h">
@@ -216,6 +225,15 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Objects\CharacterBase\Player\State\Enum\PlayerState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\CharacterBase\EnemyBase\Nokonoko\Nokonoko.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\CharacterBase\EnemyBase\Kuribo\Kuribo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\CharacterBase\EnemyBase\EnemyBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

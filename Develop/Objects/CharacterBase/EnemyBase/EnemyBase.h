@@ -1,21 +1,21 @@
 #pragma once
 
-#include "../GameObjectBase.h"
+#include "../CharacterBase.h"
 
-class CharacterBase : public GameObjectBase
+//エネミー基底クラス
+class EnemyBase :public CharacterBase
 {
 protected:
-	float g_velocity;
-	int hit_point;
-	bool on_ground;
+	enum eEnemyState
+	{
+		NONE,
+		MOVE,
+		DESTROTY
+	};
 
 public:
-	Vector2D velocity;
-	//Vector2D box_size = (0.0f);
-
-public:
-	CharacterBase();
-	~CharacterBase();
+	EnemyBase();
+	~EnemyBase();
 
 public:
 	virtual void Initialize() override;
@@ -26,7 +26,7 @@ public:
 public:
 	virtual void OnHitCollision(GameObjectBase* hit_object) override;
 
-public:
-	virtual void Movement(float delta_second);
+//public:
+//	void Movement(float delta_second);
 };
 

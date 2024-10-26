@@ -15,6 +15,7 @@ enum eInputState
 	Held
 };
 
+//インプットマネージャークラス
 class InputManager : public Singleton<class T>
 {
 private:
@@ -36,6 +37,7 @@ public:
 	InputManager();
 	~InputManager();
 
+	//インスタンスの削除
 	static void DeleteInstance();
 
 public:

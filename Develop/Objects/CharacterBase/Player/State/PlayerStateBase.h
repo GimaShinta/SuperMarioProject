@@ -23,12 +23,18 @@ public:
 	virtual ~PlayerStateBase() = default;
 
 public:
+	//‰Šú‰»ˆ—
 	virtual void Initialize() = 0;
+	//I—¹ˆ—
 	virtual void Finalize() = 0;
+	//XVˆ—
 	virtual void Update() = 0;
+	//•`‰æˆ—
 	virtual void Draw() const = 0;
 
 public:
+	//Œ»İ‚ÌŒ©‚½–Ú‚Ìó‘Ô‚ğæ“¾
 	virtual ePlayerLooksState GetLooksState() const = 0;
+	//Œ»İ‚Ì“®‚«‚Ìó‘Ô‚ğæ“¾
 	virtual ePlayerState GetState() const = 0;
 };

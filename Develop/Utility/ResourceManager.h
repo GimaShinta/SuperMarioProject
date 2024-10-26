@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+//リソースマネージャークラス
 class ResourceManager : public Singleton<class T>
 {
 private:
@@ -16,6 +17,7 @@ private:
 	std::map<std::string, int> sounds_container;				// 音源コンテナ
 
 public:
+	//インスタンスの削除
 	static void DeleteInstance();
 
 public:

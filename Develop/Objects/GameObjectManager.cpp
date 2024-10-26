@@ -153,6 +153,32 @@ void GameObjectManager::DestroyGameObject(GameObjectBase* target)
 
 void GameObjectManager::CheckCollision(GameObjectBase* target, GameObjectBase* partner)
 {
+	// ヌルポチェック
+	if (target == nullptr || partner == nullptr)
+	{
+		return;
+	}
+
+	//２つのオブジェクトの処理を取得
+	Vector2D diff = target->GetLocation() - partner->GetLocation();
+
+	//２つのオブジェクトの当たり判定の大きさを取得
+	Vector2D box_size = ((target->GetBoxSize() + partner->GetBoxSize()) / 2.0f);
+
+	BoxCollision tc = target->GetCollision();
+	BoxCollision pc = partner->GetCollision();
+
+	// 当たり判定が有効か確認する
+	if (tc.IsCheckHitTarget(pc.object_type) || pc.IsCheckHitTarget(tc.object_type))
+	{
+		//距離より大きさが大きい場合、Hit判定をする
+		if ((fabsf(diff.x) < box_size.x)&& (fabsf(diff.y) < box_size.y))
+		{
+			//当たったことをオブジェクトに通知する
+			target->OnHitCollision(partner);
+			partner->OnHitCollision(target);
+		}
+	}
 }
 
 const Vector2D GameObjectManager::GetScreenOffset() const

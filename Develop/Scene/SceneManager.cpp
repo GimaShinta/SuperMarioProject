@@ -17,8 +17,10 @@ SceneManager::~SceneManager()
 {
 }
 
+//インスタンスの削除
 void SceneManager::DeleteInstance()
 {
+	// 自クラスのポインタ（実体をアドレスの先で保有）
 	static SceneManager* instance = nullptr;
 
 	// インスタンスが存在している場合、削除する
@@ -29,10 +31,16 @@ void SceneManager::DeleteInstance()
 	}
 }
 
+//初期化処理
 void SceneManager::Initialize()
 {
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="delta_second">1フレーム当たりの時間</param>
+/// <returns></returns>
 bool SceneManager::Update(float delta_second)
 {
 	// 入力情報を取得する
@@ -61,12 +69,14 @@ bool SceneManager::Update(float delta_second)
 	return false;
 }
 
+//描画処理
 void SceneManager::Draw()
 {
 	// シーンの描画処理
 	current_scene->Draw();
 }
 
+//終了時処理
 void SceneManager::Finalize()
 {
 	// シーン情報が生成されていれば、削除する
@@ -78,6 +88,7 @@ void SceneManager::Finalize()
 	}
 }
 
+//シーンの切り替え
 void SceneManager::ChangeScene(eSceneType type)
 {
 	//引数で渡された情報から新しいシーンを作成する
@@ -101,6 +112,7 @@ void SceneManager::ChangeScene(eSceneType type)
 	current_scene = new_scene;
 }
 
+//シーンの生成
 SceneBase* SceneManager::CreateScene(eSceneType type)
 {
 	//シーン情報によって、生成するシーンを切り替える

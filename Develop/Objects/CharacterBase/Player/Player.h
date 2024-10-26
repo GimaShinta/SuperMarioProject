@@ -5,6 +5,7 @@
 
 #include "State/Enum/PlayerState.h"
 
+//マリオの見た目の状態
 enum ePlayerLooksState
 {
 	NOMALMARIO,
@@ -15,6 +16,7 @@ enum ePlayerLooksState
 	DESTROYMARIO
 };
 
+//プレイヤークラス
 class Player : public CharacterBase
 {
 private:
@@ -30,7 +32,6 @@ public:
 	int coin_count;
 	bool is_star;
 	bool is_destroy;
-	Vector2D box_size = (0.0f);
 
 private:
 	class PlayerStateBase* state = nullptr;
@@ -51,17 +52,41 @@ public:
 	~Player();
 
 public:
+	//初期化処理
 	void Initialize() override;
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	/// <param name="delata_second"></param>
 	void Update(float delata_second) override;
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	/// <param name="screen_offset"></param>
 	void Draw(const Vector2D& screen_offset)const override;
+
+	//終了時処理
 	void Finalize() override;
 
 public:
+	void OnHitCollision(GameObjectBase* hit_object) override;
+
+public:
+	//残り残機の取得
 	int GetZanki();
+	//パワーアップ状態かを見る
 	bool GetPowerUp()const;
+	//パワーアップ状態の設定
 	void SetPowerDown();
+	//死んだ状態かを見る
 	bool GetDestroy()const;
+	//アニメーション制御
 	void AnimationControl(float delta_second);
+	//ステートの切り替え
 	void SetNextState(ePlayerState next_state);
+
+	Vector2D& GetBoxSize();
 };
 

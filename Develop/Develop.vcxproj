@@ -141,6 +141,9 @@
   <ItemGroup>
     <ClCompile Include="Application\Application.cpp" />
     <ClCompile Include="AppMain.cpp" />
+    <ClCompile Include="Objects\CharacterBase\EnemyBase\EnemyBase.cpp" />
+    <ClCompile Include="Objects\CharacterBase\EnemyBase\Kuribo\Kuribo.cpp" />
+    <ClCompile Include="Objects\CharacterBase\EnemyBase\Nokonoko\Nokonoko.cpp" />
     <ClCompile Include="Objects\CharacterBase\Player\State\JumpState\JumpState.cpp" />
     <ClCompile Include="Objects\CharacterBase\Player\State\IdelState\IdleState.cpp" />
     <ClCompile Include="Objects\CharacterBase\Fireball\Fireball.cpp" />
@@ -174,6 +177,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Application.h" />
+    <ClInclude Include="Objects\CharacterBase\EnemyBase\EnemyBase.h" />
+    <ClInclude Include="Objects\CharacterBase\EnemyBase\Kuribo\Kuribo.h" />
+    <ClInclude Include="Objects\CharacterBase\EnemyBase\Nokonoko\Nokonoko.h" />
     <ClInclude Include="Objects\CharacterBase\Player\State\Enum\PlayerState.h" />
     <ClInclude Include="Objects\CharacterBase\Player\State\JumpState\JumpState.h" />
     <ClInclude Include="Objects\CharacterBase\Player\State\IdelState\IdleState.h" />
