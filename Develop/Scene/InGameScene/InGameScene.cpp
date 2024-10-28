@@ -66,6 +66,10 @@ void InGameScene::Draw()
 //終了時処理
 void InGameScene::Finalize()
 {
+	//オブジェクト管理クラスの情報を取得
+	GameObjectManager* gom = Singleton<GameObjectManager>::GetInstance();
+	//オブジェクト管理クラスの終了時処理を呼び出す
+	gom->Finalize();
 }
 
 //現在のシーン情報
@@ -78,15 +82,15 @@ const eSceneType InGameScene::GetNowSceneType() const
 void InGameScene::LoadStageMapCSV()
 {
 	//インスタンスの取得
-	GameObjectManager* obj_manager = Singleton<GameObjectManager>::GetInstance();
+	GameObjectManager* gom = Singleton<GameObjectManager>::GetInstance();
 
 	//プレイヤーの生成
 	Vector2D generate_location = Vector2D(200.0f, 600.0f);
-	player = obj_manager->CreateObject<Player>(generate_location);
+	player = gom->CreateObject<Player>(generate_location);
 
 	//エネミーの生成
 	generate_location = Vector2D(800.0f, 600.0f);
-	kuribo = obj_manager->CreateObject<Kuribo>(generate_location);
+	kuribo = gom->CreateObject<Kuribo>(generate_location);
 }
 
 //オブジェクト読込み
