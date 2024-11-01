@@ -19,26 +19,45 @@ bool BoxCollision::IsCheckHitTarget(eObjectType hit_object) const
 	return false;
 }
 
-float BoxCollision::SetPoint(const eDirection direction, const Vector2D& location, const Vector2D& size)
+// 矩形の辺の関係位置で当たり判定をチェック
+bool IsCheckCollision(const BoxCollision& c1, const BoxCollision& c2)
 {
-	switch (direction)
+	// 矩形1の左辺と矩形2の右辺の位置関係
+	bool is_left_less_right = false;
+	if (c1.point[0].x <= c2.point[1].x)
 	{
-		case eDirection::UP:
-		point = location.y + size.y;
-		break;
-
-		case eDirection::DOWN:
-		point = location.y + size.y;
-		break;
-
-		case eDirection::LEFT:
-		point = location.x + size.x;
-		break;
-
-		case eDirection::REGHT:
-		point = location.x - size.x;
-		break;
+		is_left_less_right = true;
 	}
 
-	return point;
+	// 矩形1の右辺と矩形2の左辺の位置関係
+	bool is_right_greater_left = false;
+	if (c1.point[1].x >= c2.point[0].x)
+	{
+		is_right_greater_left = true;
+	}
+
+	// 矩形1の上辺と矩形2の下辺の位置関係
+	bool is_top_less_bottom = false;
+	if (c1.point[0].y <= c2.point[1].y)
+	{
+		is_top_less_bottom = true;
+	}
+
+	// 矩形1の下辺と矩形2の上辺の位置関係
+	bool is_bottom_greater_top = false;
+	if (c1.point[1].y >= c2.point[0].y)
+	{
+		is_bottom_greater_top = true;
+	}
+
+	// 全ての条件が当てはまっていたら、ヒット
+	if (is_left_less_right == true &&
+		is_right_greater_left == true &&
+		is_top_less_bottom == true &&
+		is_bottom_greater_top == true)
+	{
+		return true;
+	}
+
+	return false;
 }

@@ -39,7 +39,7 @@ void Player::Initialize()
 void Player::Update(float delta_second)
 {
 	// stateの変更処理
-	if (next_state != ePlayerState::NONE)
+	if (next_state != ePlayerState::NONE && is_mobility == true)
 	{
 		state = PlayerStateFactory::Get((*this), next_state);
 		next_state = ePlayerState::NONE;
@@ -111,7 +111,7 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 {
 	if (hit_object->GetCollision().object_type == eObjectType::eEnemy)
 	{
-#if 1
+#if 0
 		//２つのオブジェクトの距離を取得
 		Vector2D diff = location - hit_object->GetLocation();
 
@@ -124,12 +124,18 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 			//めり込んだ差分だけ戻る
 			location.x -= diff.x + box_size.x;
 		}
-		if ((fabsf(diff.y) < box_size.y))
+		else
 		{
 			//めり込んだ差分だけ戻る
-			location.y -= diff.y + box_size.y;
-			velocity.y -= 15;
+			location.x += diff.x + box_size.x;
 		}
+
+#else
+		// 当たり判定情報を取得して、カプセルがある位置を求める
+		BoxCollision hc = hit_object->GetCollision();
+		hc.point[0] += hit_object->GetLocation() - hit_object->GetBoxSize();
+		hc.point[1] += hit_object->GetLocation() + hit_object->GetBoxSize();
+
 #endif
 	}
 }

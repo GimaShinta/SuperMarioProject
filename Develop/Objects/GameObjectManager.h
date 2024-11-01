@@ -19,20 +19,27 @@ public:
 	virtual ~GameObjectManager();
 
 public:
+	//初期化処理
 	virtual void Initialize();
 
+	//更新処理
 	virtual void Update(const float& delta_second);
 
+	//描画処理
 	virtual void Draw() const;
 
+	//終了時処理
 	virtual void Finalize();
 
+	//生成できるオブジェクトがあるかをチェック
 	virtual void CheckCreateObject();
 
+	//削除できるオブジェクトがあるかをチェック
 	virtual void CheckDesroyObject();
 
 	//virtual std::vector<GameObjectBase*>& CreateGameObject();
 
+	//オブジェクトの生成
 	template <class OBJECT>
 	OBJECT* CreateObject(const Vector2D& generate_location)
 	{
@@ -61,14 +68,17 @@ public:
 		return new_instance;
 	}
 
+	//オブジェクトを削除する
 	void DestroyGameObject(GameObjectBase* target);
 
 public:
+	//当たり判定のチェック
 	virtual void CheckCollision(GameObjectBase* target, GameObjectBase* partner);
 
 	const Vector2D GetScreenOffset() const;
 
 private:
+	//全てのオブジェクトを削除
 	void DestoryAllObject();
 
 };

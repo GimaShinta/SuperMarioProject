@@ -10,12 +10,15 @@ GameObjectManager::~GameObjectManager()
 	Finalize();
 }
 
+//初期化処理
 void GameObjectManager::Initialize()
 {
 }
 
+//更新処理
 void GameObjectManager::Update(const float& delta_second)
 {
+	//生成できるオブジェクトをメイン配列に移動させる
 	CheckCreateObject();
 
 	// リスト内のオブジェクトを更新する
@@ -27,11 +30,13 @@ void GameObjectManager::Update(const float& delta_second)
 	// 当たり判定確認処理
 	for (int i = 0; i < game_object.size(); i++)
 	{
+		//移動の許可
 		if (game_object[i]->GetMobility() == false)
 		{
 			continue;
 		}
 
+		//見ているオブジェクトが同じであれば当たり判定を無くす
 		for (int j = 0; j < game_object.size(); j++)
 		{
 			if (i == j)
@@ -39,22 +44,27 @@ void GameObjectManager::Update(const float& delta_second)
 				continue;
 			}
 
+			//当たっているかをチェック
 			CheckCollision(game_object[i], game_object[j]);
 		}
 	}
 
+	//削除されるオブジェクトを配列に入れる
 	CheckDesroyObject();
 }
 
+//描画処理
 void GameObjectManager::Draw() const
 {
 	// オブジェクトリスト内のオブジェクトを描画する
 	for (GameObjectBase* obj : game_object)
 	{
+		//メイン配列にいるオブジェクトの描画
 		obj->Draw(screen_offset);
 	}
 }
 
+//終了時処理
 void GameObjectManager::Finalize()
 {
 	// オブジェクトリスト内のオブジェクトを破棄する
@@ -71,6 +81,7 @@ void GameObjectManager::Finalize()
 	}
 }
 
+//生成するオブジェクトがあるかを見る
 void GameObjectManager::CheckCreateObject()
 {
 	// 生成するオブジェクトがあれば、オブジェクトリスト内に挿入する
@@ -99,6 +110,8 @@ void GameObjectManager::CheckCreateObject()
 		create_object.clear();
 	}
 }
+
+//削除されるオブジェクトがあるかを見る
 void GameObjectManager::CheckDesroyObject()
 {
 	// 破棄リスト内が空でない場合、リスト内のオブジェクトを破棄する
@@ -130,6 +143,7 @@ void GameObjectManager::CheckDesroyObject()
 //	return ;
 //}
 
+//削除配列にいるオブジェクトを削除する
 void GameObjectManager::DestroyGameObject(GameObjectBase* target)
 {
 	// ヌルポチェック
@@ -151,8 +165,10 @@ void GameObjectManager::DestroyGameObject(GameObjectBase* target)
 	destroy_object.push_back(target);
 }
 
+//当たり判定のチェック
 void GameObjectManager::CheckCollision(GameObjectBase* target, GameObjectBase* partner)
 {
+#if 0
 	// ヌルポチェック
 	if (target == nullptr || partner == nullptr)
 	{
@@ -179,6 +195,43 @@ void GameObjectManager::CheckCollision(GameObjectBase* target, GameObjectBase* p
 			partner->OnHitCollision(target);
 		}
 	}
+
+#else
+
+	// 中身が入っているかをチェック
+	if (target == nullptr || partner == nullptr)
+	{
+		return;
+	}
+
+	// 当たり判定情報を取得
+	BoxCollision tc = target->GetCollision();
+	BoxCollision pc = partner->GetCollision();
+
+	// 当たり判定が有効か確認する
+	if (tc.IsCheckHitTarget(pc.object_type) || pc.IsCheckHitTarget(tc.object_type))
+	{
+		// 対角線上の頂点座標を求める
+		// target矩形の左上の座標を求める
+		tc.point[0] += target->GetLocation() - target->GetBoxSize();
+		// targt矩形の右下の座標を求める
+		tc.point[1] += target->GetLocation() + target->GetBoxSize();
+		// partner矩形の左上の座標を求める
+		pc.point[0] += partner->GetLocation() - partner->GetBoxSize();
+		// partner矩形の右下の座標を求める
+		pc.point[1] += partner->GetLocation() + partner->GetBoxSize();
+
+		// カプセル同士の当たり判定
+		if (IsCheckCollision(tc, pc))
+		{
+			// 当たっていることを通知する
+			target->OnHitCollision(partner);
+			partner->OnHitCollision(target);
+		}
+
+	}
+
+#endif
 }
 
 const Vector2D GameObjectManager::GetScreenOffset() const
@@ -186,6 +239,7 @@ const Vector2D GameObjectManager::GetScreenOffset() const
 	return screen_offset;
 }
 
+//メイン配列にいるオブジェクトを全て削除
 void GameObjectManager::DestoryAllObject()
 {
 	// オブジェクトリストが空なら処理を終了する
