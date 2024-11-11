@@ -20,6 +20,7 @@ void Player::Initialize()
 {
 	state = PlayerStateFactory::Get((*this), ePlayerState::IDLE);
 	next_state = ePlayerState::NONE;
+	now_state = ePlayerState::NONE;
 	velocity = Vector2D(0, 0);
 	g_velocity = 0.0f;
 	is_mobility = true;
@@ -41,6 +42,9 @@ void Player::Update(float delta_second)
 	// stateの変更処理
 	if (next_state != ePlayerState::NONE && is_mobility == true)
 	{
+		//現在の移動状態を保管
+		now_state = next_state;
+
 		state = PlayerStateFactory::Get((*this), next_state);
 		next_state = ePlayerState::NONE;
 	}
@@ -77,11 +81,25 @@ void Player::Update(float delta_second)
 		location.x = 0.0f + box_size.x;
 		velocity = 0.0f;
 	}
-	//x1280.0f地点を壁と仮定
-	if (1280.0f - box_size.x < location.x)
+
+	//背景スクロールが右端に着いたら移動範囲を拡大する
+	if (screen_end == false)
 	{
-		location.x = 1280.0f - box_size.x;
-		velocity = 0.0f;
+		//x350.0f地点を壁と仮定
+		if (350.0f - box_size.x < location.x)
+		{
+			location.x = 350.0f - box_size.x;
+			velocity = 0.0f;
+		}
+	}
+	else
+	{
+		//x960.0f地点を壁と仮定
+		if (960.0f - box_size.x < location.x)
+		{
+			location.x = 960.0f - box_size.x;
+			velocity = 0.0f;
+		}
 	}
 }
 
@@ -107,11 +125,12 @@ void Player::Finalize()
 	factory->Finalize();
 }
 
+//ヒット時処理
 void Player::OnHitCollision(GameObjectBase* hit_object)
 {
 	if (hit_object->GetCollision().object_type == eObjectType::eEnemy)
 	{
-#if 0
+#if 1
 		//２つのオブジェクトの距離を取得
 		Vector2D diff = location - hit_object->GetLocation();
 
@@ -124,17 +143,49 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 			//めり込んだ差分だけ戻る
 			location.x -= diff.x + box_size.x;
 		}
-		else
-		{
-			//めり込んだ差分だけ戻る
-			location.x += diff.x + box_size.x;
-		}
+		//else
+		//{
+		//	//めり込んだ差分だけ戻る
+		//	location.x += diff.x + box_size.x;
+		//}
+
+		//// 2つのオブジェクトの距離を取得
+		//Vector2D diff = location - hit_object->GetLocation();
+
+		//// 2つのオブジェクトの当たり判定の大きさを取得
+		//Vector2D pbox_size = ((box_size + hit_object->GetBoxSize()) / 2.0f);
+
+		//// 距離より大きさが大きい場合、Hit判定をする
+		//if (fabsf(diff.x) < pbox_size.x) 
+		//{
+		//	// めり込み量を計算
+		//	float overlap = pbox_size.x - fabsf(diff.x);
+
+		//	// 衝突方向を判定し、位置を調整
+		//	if (diff.x > 0) 
+		//	{
+		//		// 右方向から衝突
+		//		location.x -= overlap;
+		//	}
+		//	else 
+		//	{
+		//		// 左方向から衝突
+		//		location.x += overlap;
+		//	}
+		//}
 
 #else
 		// 当たり判定情報を取得して、カプセルがある位置を求める
 		BoxCollision hc = hit_object->GetCollision();
 		hc.point[0] += hit_object->GetLocation() - hit_object->GetBoxSize();
 		hc.point[1] += hit_object->GetLocation() + hit_object->GetBoxSize();
+
+		Vector2D p_point[2];
+		p_point[0] = location + box_size;
+		p_point[0] = location - box_size;
+
+		float diff[2];
+		diff[0] = p_point[0].x - hc.point[0].x;
 
 #endif
 	}
@@ -174,7 +225,21 @@ void Player::SetNextState(ePlayerState next_state)
 	this->next_state = next_state;
 }
 
+//プレイヤーの判定サイズを取得
 Vector2D& Player::GetBoxSize()
 {
 	return box_size;
+}
+
+//プレイヤーの移動状態を取得
+ePlayerState Player::GetPlayerState()
+{
+	//現在の移動状態
+	return now_state;
+}
+
+//背景スクロールが端に着いたかを設定
+void Player::SetScreenEnd(bool screen_end)
+{
+	this->screen_end = screen_end;
 }

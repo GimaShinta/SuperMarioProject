@@ -2,8 +2,9 @@
 #include "DxLib.h"
 
 #include "../../Utility/InputManager.h"
+#include "../../Utility/ResourceManager.h"
 
-TitleScene::TitleScene():back_ground(NULL)
+TitleScene::TitleScene():back_ground_image(NULL)
 {
 }
 
@@ -14,6 +15,8 @@ TitleScene::~TitleScene()
 //初期化処理
 void TitleScene::Initialize()
 {
+	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
+	back_ground_image = rm->GetImages("Resource/Images/title.png")[0];
 }
 
 /// <summary>
@@ -39,6 +42,9 @@ eSceneType TitleScene::Update(float delta_second)
 //描画処理
 void TitleScene::Draw()
 {
+	// 背景画像の描画
+	DrawRotaGraph(480, 360, 1.5, 0.0, back_ground_image, TRUE);
+
 	DrawString(0,0,"タイトル画面です",GetColor(255,255,255),TRUE);
 	DrawString(0,60,"スペースキーでインゲーム",GetColor(0,255,0),TRUE);
 }

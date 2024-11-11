@@ -13,6 +13,9 @@ private:
 
 private:
 	int player_zanki;
+	int back_ground_image;
+	Vector2D screen_location;
+	bool screen_end;
 
 public:
 	InGameScene();

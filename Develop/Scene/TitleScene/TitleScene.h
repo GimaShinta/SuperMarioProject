@@ -6,7 +6,7 @@
 class TitleScene : public SceneBase
 {
 private:
-	int back_ground;
+	int back_ground_image;
 
 public:
 	TitleScene();

@@ -32,10 +32,12 @@ public:
 	int coin_count;
 	bool is_star;
 	bool is_destroy;
+	bool screen_end;
 
 private:
 	class PlayerStateBase* state = nullptr;
 	ePlayerState next_state = ePlayerState::NONE;
+	ePlayerState now_state;
 	ePlayerLooksState old_state;
 
 private:
@@ -88,5 +90,7 @@ public:
 	void SetNextState(ePlayerState next_state);
 
 	Vector2D& GetBoxSize();
+	ePlayerState GetPlayerState();
+	void SetScreenEnd(bool screen_end);
 };
 
