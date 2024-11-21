@@ -19,7 +19,6 @@ protected:
 public:
 	//インスタンスの取得
 	static T* GetInstance();
-
 };
 
 //インスタンスの取得

@@ -13,7 +13,7 @@ public:
 	//‰Šú‰»ˆ—
 	void Initialize() override;
 	//XVˆ—
-	void Update() override;
+	void Update(float delta_second) override;
 	//•`‰æˆ—
 	void Draw() const override;
 	//I—¹ˆ—

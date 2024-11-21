@@ -19,23 +19,17 @@ SquatState::~SquatState()
 void SquatState::Initialize()
 {
 	//Boxサイズを設定
-	player->box_size = Vector2D(32.0f);
+	player->box_size.y /= 2;
 
 	//速度を0にする
 	player->velocity = 0.0f;
 }
 
 //更新処理
-void SquatState::Update()
+void SquatState::Update(float delta_second)
 {
 	//インスタンスの取得
 	InputManager* input = Singleton<InputManager>::GetInstance();
-
-	//移動状態に遷移
-	if (input->GetKey(KEY_INPUT_LEFT) || input->GetKey(KEY_INPUT_RIGHT))
-	{
-		player->SetNextState(ePlayerState::RUN);
-	}
 
 	//ジャンプ状態に遷移
 	if (input->GetKeyDown(KEY_INPUT_UP))

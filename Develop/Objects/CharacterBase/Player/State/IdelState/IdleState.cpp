@@ -17,14 +17,11 @@ IdleState::~IdleState()
 
 void IdleState::Initialize()
 {
-	//Boxサイズを設定
-	player->box_size = Vector2D(32.0f);
-
 	//速度を0にする
 	player->velocity = 0.0f;
 }
 
-void IdleState::Update()
+void IdleState::Update(float delta_second)
 {
 	InputManager* input = Singleton<InputManager>::GetInstance();
 

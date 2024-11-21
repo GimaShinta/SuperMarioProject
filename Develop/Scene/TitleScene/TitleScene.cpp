@@ -47,6 +47,10 @@ void TitleScene::Draw()
 
 	DrawString(0,0,"タイトル画面です",GetColor(255,255,255),TRUE);
 	DrawString(0,60,"スペースキーでインゲーム",GetColor(0,255,0),TRUE);
+
+	SetFontSize(48);
+	DrawString(250,450,"１　PLAYER　GAME",GetColor(255,255,255),TRUE);
+	SetFontSize(16);
 }
 
 //終了時処理

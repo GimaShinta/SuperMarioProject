@@ -9,14 +9,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	try
 	{
-
 		//‰Šú‰»ˆ—
+		//Initialize
 		app.WakeUp();
 
 		//Àsˆ—
+		//Update
 		app.Run();
 
 		//I—¹ˆ—
+		//Finalize
 		app.ShutDown();
 	}
 	catch (std::string error_log)

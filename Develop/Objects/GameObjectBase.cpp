@@ -42,6 +42,34 @@ void GameObjectBase::OnHitCollision(GameObjectBase* hit_object)
 {
 }
 
+//アニメーション制御
+void GameObjectBase::AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num)
+{
+	//フレームレートで時間を計測
+	animation_time += delta_second;
+	//8秒経ったら画像を切り替える
+	if (animation_time >= (1.0f / 10.0f))
+	{
+		//計測時間の初期化
+		animation_time = 0.0f;
+		//時間経過カウントの増加
+		animation_count++;
+		//カウントがアニメーション画像の要素数以上になったら
+		if (animation_count >= animation_num.size())
+		{
+			//カウントの初期化
+			animation_count = 0;
+		}
+		// アニメーションが順番に代入される
+		image = animation_image[animation_num[animation_count]];
+	}
+}
+
+void GameObjectBase::AnimationControl(float delta_second, int animation_imag)
+{
+	image = animation_imag;
+}
+
 void GameObjectBase::SetOwnerScene(GameObjectManager* scene)
 {
 	this->owner_scene = scene;

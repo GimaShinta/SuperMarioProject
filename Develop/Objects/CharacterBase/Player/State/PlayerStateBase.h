@@ -14,9 +14,16 @@ protected:
 	//プレイヤー情報
 	class Player* player;
 	Vector2D old_location;
+	int state_image;
+	float animation_time;
+	int animation_count;
 
 public:
-	PlayerStateBase(class Player* p) :player(p)
+	PlayerStateBase(class Player* p) 
+		: player(p)
+		, state_image(NULL)
+		, animation_time(0)
+		, animation_count(0)
 	{
 	}
 
@@ -28,7 +35,7 @@ public:
 	//終了時処理
 	virtual void Finalize() = 0;
 	//更新処理
-	virtual void Update() = 0;
+	virtual void Update(float delta_second) = 0;
 	//描画処理
 	virtual void Draw() const = 0;
 

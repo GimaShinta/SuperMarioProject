@@ -18,12 +18,10 @@ RunState::~RunState()
 //初期化処理
 void RunState::Initialize()
 {
-	//Boxサイズを設定
-	player->box_size = Vector2D(32.0f);
 }
 
 //更新処理
-void RunState::Update()
+void RunState::Update(float delta_second)
 {
 	//インスタンスの取得
 	InputManager* input = Singleton<InputManager>::GetInstance();
@@ -31,12 +29,12 @@ void RunState::Update()
 	//移動処理
 	if (input->GetKey(KEY_INPUT_LEFT))
 	{
-		this->player->velocity.x -= 0.5f;
+		this->player->velocity.x -= 0.3f;
 		old_location = 0.0f;
 	}
 	else if (input->GetKey(KEY_INPUT_RIGHT))
 	{
-		this->player->velocity.x += 0.5f;
+		this->player->velocity.x += 0.3f;
 		old_location = 0.0f;
 	}
 

@@ -10,7 +10,7 @@ public:
 
 public:
 	void Initialize() override;
-	void Update() override;
+	void Update(float delta_second) override;
 	void Draw() const override;
 	void Finalize() override;
 

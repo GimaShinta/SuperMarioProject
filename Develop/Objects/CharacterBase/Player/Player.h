@@ -33,21 +33,22 @@ public:
 	bool is_star;
 	bool is_destroy;
 	bool screen_end;
+	Vector2D p_box_size[2];
 
 private:
 	class PlayerStateBase* state = nullptr;
 	ePlayerState next_state = ePlayerState::NONE;
 	ePlayerState now_state;
 	ePlayerLooksState old_state;
+	ePlayerLooksState now_looks_state;
 
 private:
-	//多分Stateで書く
-	int nomalmario_num[3];
-	int s_nomalmario_num[2];
-	int growthmario_num[2];
-	int dekamario_num[2];
-	int s_dekamario_num[2];
+	std::vector<int> nomalmario_nums = { 0,1,2,1 };
+	std::vector<int> dekamario_nums = { 2,3,4,3 };
 	int firemario_num[2];
+	int growthmario_num[2];
+	int s_nomalmario_num[2];
+	int s_dekamario_num[2];
 
 public:
 	Player();
@@ -74,6 +75,8 @@ public:
 
 public:
 	void OnHitCollision(GameObjectBase* hit_object) override;
+	//アニメーション制御
+	void AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num, int n_jump, int n_squat);
 
 public:
 	//残り残機の取得
@@ -84,13 +87,11 @@ public:
 	void SetPowerDown();
 	//死んだ状態かを見る
 	bool GetDestroy()const;
-	//アニメーション制御
-	void AnimationControl(float delta_second);
 	//ステートの切り替え
 	void SetNextState(ePlayerState next_state);
 
 	Vector2D& GetBoxSize();
-	ePlayerState GetPlayerState();
+	ePlayerState GetPlayerState() const;
 	void SetScreenEnd(bool screen_end);
 };
 

@@ -17,15 +17,12 @@ JumpState::~JumpState()
 
 void JumpState::Initialize()
 {
-	//Boxサイズを設定
-	player->box_size = Vector2D(32.0f);
-
 	//移動処理
 	this->player->velocity.y -= 15.0f;         //ジャンプ力
 	old_location = 0.0f;
 }
 
-void JumpState::Update()
+void JumpState::Update(float delta_second)
 {
 	//インスタンスの取得
 	InputManager* input = Singleton<InputManager>::GetInstance();

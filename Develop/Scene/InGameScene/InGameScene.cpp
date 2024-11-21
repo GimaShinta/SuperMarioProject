@@ -2,11 +2,15 @@
 #include "DxLib.h"
 
 #include "../../Utility/InputManager.h"
-#include "../../Objects/GameObjectManager.h"
 #include "../../Utility/ResourceManager.h"
+#include "../../Objects/GameObjectManager.h"
+#include "../../Application/Application.h"
 
 #include "../../Objects/CharacterBase/Player/Player.h"
 #include "../../Objects/CharacterBase/EnemyBase/Kuribo/Kuribo.h"
+
+#include <fstream>
+#include <iostream>
 
 InGameScene::InGameScene() 
 	: player(nullptr)
@@ -27,13 +31,20 @@ InGameScene::~InGameScene()
 //初期化処理
 void InGameScene::Initialize()
 {
-	//ステージ読込み
+	//背景ステージ読込み
 	LoadStageMapCSV();
-	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
-	back_ground_image = rm->GetImages("Resource/Images/配置素材/NES---Super-Mario-Bros---World-1-1（修正版）.png")[0];
+	//オブジェクト読込み
+	LoadStageMapObject();
 
-	//背景画像の初期座標設定
-	screen_location = Vector2D(5064, 720);
+	//背景読込み
+	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
+	back_ground_image1 = rm->GetImages("Resource/Images/sora.png")[0];
+	back_ground_image2 = rm->GetImages("Resource/Images/Block/floor.png")[0];
+	back_ground_image3 = rm->GetImages("Resource/Images/sora_g.png")[0];
+
+	// 背景画像の初期座標設定
+	screen_location = D_OBJECT_SIZE;
+
 }
 
 /// <summary>
@@ -46,28 +57,31 @@ eSceneType InGameScene::Update(float delta_second)
 	// 自クラスのポインタ（実体をアドレスの先で保有）
 	GameObjectManager* obj_manager = Singleton<GameObjectManager>::GetInstance();
 	obj_manager->Update(delta_second);
+	
 
-	//プレイヤーが移動状態でx350以上になったら背景スクロールを開始
-	Vector2D p_location = player->GetLocation();
-	Vector2D p_size = player->GetBoxSize();
-	//プレイヤーが移動状態だったら
+	// プレイヤーが移動状態だったら
 	if (player->GetPlayerState() == ePlayerState::RUN)
 	{
-		//x350以上になったら背景スクロールを開始
-		if (p_location.x + p_size.x >= 350)
+		// プレイヤーのx座標が480-boxsize以上になったら背景スクロールを開始
+		if (player->GetLocation().x >= 480.0f - (player->GetBoxSize().x * 2))
 		{
-			screen_location.x -= 0.5;
+			// スクロールスピード
+			screen_location.x -= 0.3f;
 		}
 	}
 
-	//背景画像が右端までいったら止める
-	if (screen_location.x <= -4104)
+	// スクロール最大値を設定
+	// 211は横のブロック数
+	float max_screen = -((211 * (D_OBJECT_SIZE * 2)) - (D_WIN_MAX_X + D_OBJECT_SIZE));
+
+	// 背景画像が右端までいったら止める
+	if (screen_location.x <= max_screen)
 	{
 		screen_end = true;
-		screen_location.x = -4104;
+		screen_location.x = max_screen;
 	}
 
-	//背景画像が右端にいったかをプレイヤーに通知
+	//背景画像が右端に着いたかをプレイヤーに通知
 	player->SetScreenEnd(screen_end);
 
 	//入力機能の取得
@@ -91,8 +105,36 @@ eSceneType InGameScene::Update(float delta_second)
 //描画処理
 void InGameScene::Draw()
 {
-	// 背景画像の描画
-	DrawRotaGraph(screen_location.x, screen_location.y, 3.0, 0.0, back_ground_image, TRUE);
+	// csvから読み込んだ画像情報の配列をもとに描画する
+	for (int i = 0; i < map_object.size(); i++)
+	{
+		// csvから読み込んだ情報を利用できるようにする
+		const MapObjectData& object = map_object[i];
+		// 最初の文字列を見て代入する値を変える
+		switch (object.mode)
+		{
+		case 'S':
+			screen_location.y = D_OBJECT_SIZE;
+			back_ground_image = back_ground_image1;
+			break;
+		case 'G':
+			screen_location.y = D_OBJECT_SIZE + ((D_OBJECT_SIZE * 2) * object.spos_y);
+			back_ground_image = back_ground_image2;
+			break;
+		default:
+			continue;
+		}
+
+		// 縦のブロック数分繰り返す
+		for (int j = 0; j < object.y_size; j++)
+		{
+			// 横のブロック数分繰り返す
+			for (int n = 0; n < object.x_size; n++)
+			{
+				DrawRotaGraph(screen_location.x + ((D_OBJECT_SIZE * 2) * n), screen_location.y + ((D_OBJECT_SIZE * 2) * j), 1.5, 0.0, back_ground_image, TRUE);
+			}
+		}
+	}
 
 	DrawString(0, 0, "インゲーム画面です", GetColor(255, 255, 255), TRUE);
 	DrawString(0, 60, "スペースキーでリザルト", GetColor(0, 255, 0), TRUE);
@@ -118,8 +160,40 @@ const eSceneType InGameScene::GetNowSceneType() const
 	return eSceneType::eInGame;
 }
 
-//ステージ読込み
+//ステージ背景読込み
 void InGameScene::LoadStageMapCSV()
+{
+	// 読み込むファイル名
+	std::string file_name = "Resource/Map/Map.csv";
+	// 指定ファイルを読み込む
+	std::ifstream ifs(file_name);
+
+	// エラーチェック
+	if (ifs.fail())
+	{
+		throw (file_name + "が開けません\n");
+	}
+
+	// ファイルから1行ずつ読み込む
+	std::string line;
+	// 読み込んだデータをmapObjectsに格納
+	MapObjectData data;
+	while (std::getline(ifs, line))
+	{
+		sscanf_s(
+			line.c_str(),
+			"%c,%d,%d,%d,%d",
+			&data.mode, (unsigned int)sizeof(data.mode),
+			&data.x_size, &data.y_size,
+			&data.spos_x, &data.spos_y
+		);
+
+		map_object.push_back(data);
+	}
+}
+
+//オブジェクト読込み
+void InGameScene::LoadStageMapObject()
 {
 	//インスタンスの取得
 	GameObjectManager* obj_m = Singleton<GameObjectManager>::GetInstance();
@@ -133,7 +207,3 @@ void InGameScene::LoadStageMapCSV()
 	kuribo = obj_m->CreateObject<Kuribo>(generate_location);
 }
 
-//オブジェクト読込み
-void InGameScene::LoadStageMapObject()
-{
-}

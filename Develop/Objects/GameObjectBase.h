@@ -38,6 +38,11 @@ public:
 public:
 	virtual void OnHitCollision(GameObjectBase* hit_object);
 
+	//複数枚アニメーションの制御
+	virtual void AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num);
+	//一枚アニメーションの制御
+	virtual void AnimationControl(float delta_second, int animation_image);
+
 public:
 	void SetOwnerScene(class GameObjectManager* scene);
 	void SetLocation(const Vector2D& location);

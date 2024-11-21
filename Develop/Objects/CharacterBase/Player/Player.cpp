@@ -7,6 +7,9 @@
 #define D_GRAVITY (9.80f)      //重力加速度(m/ss)
 #define D_MAX_SPEED (10.0f)
 
+/*でかくなったら埋まるからそれぞれで描画した方がいいかも*/
+
+
 Player::Player()
 {
 }
@@ -21,12 +24,18 @@ void Player::Initialize()
 	state = PlayerStateFactory::Get((*this), ePlayerState::IDLE);
 	next_state = ePlayerState::NONE;
 	now_state = ePlayerState::NONE;
+	now_looks_state = ePlayerLooksState::NOMALMARIO;
 	velocity = Vector2D(0, 0);
 	g_velocity = 0.0f;
 	is_mobility = true;
+	box_size = Vector2D(D_OBJECT_SIZE);
+	p_box_size[0] = box_size;
+	p_box_size[1] = Vector2D(D_OBJECT_SIZE, (D_OBJECT_SIZE * 2));
 
 	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
-	image = rm->GetImages("Resource/Images/Mario/mario.png", 9, 9, 1, 32, 32)[0];
+	nomalmario_animation = rm->GetImages("Resource/Images/Mario/mario.png", 9, 9, 1, 32, 32);
+	dekamario_animation = rm->GetImages("Resource/Images/Mario/dekamario.png", 10, 10, 1, 32, 64);
+	image = nomalmario_animation[0];
 
 	collision.is_blocking = true;
 	collision.object_type = eObjectType::ePlayer;
@@ -39,6 +48,38 @@ void Player::Initialize()
 /// <param name="delta_second">1フレーム当たりの時間</param>
 void Player::Update(float delta_second)
 {
+	/***********
+	* 見た目の状態によって処理を変更
+	* 
+	*  1,判定サイズの初期化
+	*  2,アニメーション制御（引数は各状態の画像配列と順序配列、ジャンプ画像の位置、しゃがみ画像の位置）
+	* 
+	*************/
+	switch (now_looks_state)
+	{
+	case ePlayerLooksState::NOMALMARIO:
+		box_size = p_box_size[0];
+		//アニメーション制御
+		AnimationControl(delta_second, nomalmario_animation, nomalmario_nums, 5, NULL);
+		break;
+	case ePlayerLooksState::DEKAMARIO:
+		box_size = p_box_size[1];
+		//アニメーション制御
+		AnimationControl(delta_second, dekamario_animation, dekamario_nums, 6, 1);
+		break;
+	case ePlayerLooksState::FIREMARIO:
+		box_size = p_box_size[1];
+		break;
+	case ePlayerLooksState::STARNOMALMARIO:
+		box_size = p_box_size[0];
+		break;
+	case ePlayerLooksState::STARDEKAMARIO:
+		box_size = p_box_size[1];
+		break;
+	case ePlayerLooksState::DESTROYMARIO:
+		break;
+	}
+
 	// stateの変更処理
 	if (next_state != ePlayerState::NONE && is_mobility == true)
 	{
@@ -62,13 +103,13 @@ void Player::Update(float delta_second)
 #endif
 
 	//状態別の更新処理を行う
-	state->Update();
+	state->Update(delta_second);
 
 	//移動の実行
 	location += velocity;
 
 	//y600.0f地点を地面と仮定
-	if (600.0f < location.y)
+	if (location.y > 600.0f)
 	{
 		location.y = 600.0f;
 		g_velocity = 0.0f;
@@ -76,7 +117,7 @@ void Player::Update(float delta_second)
 	}
 
 	//x0.0f地点を壁と仮定
-	if (0.0f + box_size.x > location.x)
+	if (location.x < 0.0f + box_size.x)
 	{
 		location.x = 0.0f + box_size.x;
 		velocity = 0.0f;
@@ -85,17 +126,17 @@ void Player::Update(float delta_second)
 	//背景スクロールが右端に着いたら移動範囲を拡大する
 	if (screen_end == false)
 	{
-		//x350.0f地点を壁と仮定
-		if (350.0f - box_size.x < location.x)
+		//x400.0f地点を壁と仮定
+		if (location.x > 480.0f - (box_size.x * 2 ))
 		{
-			location.x = 350.0f - box_size.x;
+			location.x = 480.0f - (box_size.x * 2);
 			velocity = 0.0f;
 		}
 	}
 	else
 	{
 		//x960.0f地点を壁と仮定
-		if (960.0f - box_size.x < location.x)
+		if (location.x > 960.0f - box_size.x)
 		{
 			location.x = 960.0f - box_size.x;
 			velocity = 0.0f;
@@ -109,12 +150,13 @@ void Player::Update(float delta_second)
 /// <param name="screen_offset"></param>
 void Player::Draw(const Vector2D& screen_offset) const
 {
+	//状態別の描画処理を行う
+	state->Draw();
+
+	//親クラスの描画処理を行う
 	__super::Draw(screen_offset);
 
 	DrawString(0, 120, "プレイヤーの描画ok", GetColor(255, 255, 255), TRUE);
-
-	//状態別の描画処理を行う
-	state->Draw();
 }
 
 //終了時処理
@@ -123,6 +165,7 @@ void Player::Finalize()
 	//インスタンスの取得
 	PlayerStateFactory* factory = Singleton<PlayerStateFactory>::GetInstance();
 	factory->Finalize();
+	ResourceManager::DeleteInstance();
 }
 
 //ヒット時処理
@@ -191,6 +234,34 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 	}
 }
 
+/// <summary>
+/// アニメーションの制御
+/// </summary>
+/// <param name="delta_second">1フレーム当たりの時間</param>
+/// <param name="animation_image">アニメーション総画像</param>
+/// <param name="animation_num">アニメーション順序</param>
+/// <param name="n_jump">ジャンプ画像の位置</param>
+/// <param name="n_squat">しゃがみ画像の位置</param>
+void Player::AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num, int n_jump, int n_squat)
+{
+	switch (now_state)
+	{
+		case ePlayerState::RUN:
+			GameObjectBase::AnimationControl(delta_second, animation_image, animation_num);
+			break;
+		case ePlayerState::IDLE:
+			image = animation_image[0];
+			break;
+		case ePlayerState::JUMP:
+			image = animation_image[n_jump];
+			break;
+		case ePlayerState::SQUAT:
+			image = animation_image[n_squat];
+		case ePlayerState::NONE:
+			break;
+	}
+}
+
 //残り残機の取得
 int Player::GetZanki()
 {
@@ -214,10 +285,6 @@ bool Player::GetDestroy() const
 	return false;
 }
 
-//アニメーション制御
-void Player::AnimationControl(float delta_second)
-{
-}
 
 //次のシーンに切り替え
 void Player::SetNextState(ePlayerState next_state)
@@ -232,7 +299,7 @@ Vector2D& Player::GetBoxSize()
 }
 
 //プレイヤーの移動状態を取得
-ePlayerState Player::GetPlayerState()
+ePlayerState Player::GetPlayerState() const
 {
 	//現在の移動状態
 	return now_state;
