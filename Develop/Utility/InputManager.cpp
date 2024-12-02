@@ -2,14 +2,6 @@
 #include "../Singleton.h"
 #include "DxLib.h"
 
-InputManager::InputManager()
-{
-}
-
-InputManager::~InputManager()
-{
-}
-
 void InputManager::DeleteInstance()
 {
 	// 自クラスのポインタ（実体をアドレスの先で保有）

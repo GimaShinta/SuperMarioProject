@@ -2,10 +2,10 @@
 #include "DxLib.h"
 
 #include "../../../Utility/ResourceManager.h"
+#include "../../../Objects/GameObjectManager.h"
 #include "State/Factory/PlayerStateFactory.h"
 
 #define D_GRAVITY (9.80f)      //重力加速度(m/ss)
-#define D_MAX_SPEED (10.0f)
 
 /*でかくなったら埋まるからそれぞれで描画した方がいいかも*/
 
@@ -28,6 +28,7 @@ void Player::Initialize()
 	velocity = Vector2D(0, 0);
 	g_velocity = 0.0f;
 	is_mobility = true;
+	is_huge = false;
 	box_size = Vector2D(D_OBJECT_SIZE);
 	p_box_size[0] = box_size;
 	p_box_size[1] = Vector2D(D_OBJECT_SIZE, (D_OBJECT_SIZE * 2));
@@ -48,36 +49,40 @@ void Player::Initialize()
 /// <param name="delta_second">1フレーム当たりの時間</param>
 void Player::Update(float delta_second)
 {
-	/***********
-	* 見た目の状態によって処理を変更
-	* 
-	*  1,判定サイズの初期化
-	*  2,アニメーション制御（引数は各状態の画像配列と順序配列、ジャンプ画像の位置、しゃがみ画像の位置）
-	* 
-	*************/
+	// 見た目の状態によって処理を変更
 	switch (now_looks_state)
 	{
 	case ePlayerLooksState::NOMALMARIO:
-		box_size = p_box_size[0];
-		//アニメーション制御
+		is_huge = false;
+		// アニメーション制御
 		AnimationControl(delta_second, nomalmario_animation, nomalmario_nums, 5, NULL);
 		break;
 	case ePlayerLooksState::DEKAMARIO:
-		box_size = p_box_size[1];
-		//アニメーション制御
+		is_huge = true;
+		// アニメーション制御
 		AnimationControl(delta_second, dekamario_animation, dekamario_nums, 6, 1);
 		break;
 	case ePlayerLooksState::FIREMARIO:
-		box_size = p_box_size[1];
+		is_huge = true;
 		break;
 	case ePlayerLooksState::STARNOMALMARIO:
-		box_size = p_box_size[0];
+		is_huge = false;
 		break;
 	case ePlayerLooksState::STARDEKAMARIO:
-		box_size = p_box_size[1];
+		is_huge = true;
 		break;
 	case ePlayerLooksState::DESTROYMARIO:
 		break;
+	}
+
+	// 大きさによって当たり判定サイズを変更する
+	if (is_huge == false)
+	{
+		box_size = p_box_size[0];
+	}
+	else
+	{
+		box_size = p_box_size[1];
 	}
 
 	// stateの変更処理
@@ -90,56 +95,47 @@ void Player::Update(float delta_second)
 		next_state = ePlayerState::NONE;
 	}
 
-#if 1
 	//重力速度の計算
-	g_velocity += D_GRAVITY / 444.0f;
-	velocity.y += g_velocity;
-
-	//最大重力の設定
-	if (velocity.y > D_MAX_SPEED)
-	{
-		velocity.y = D_MAX_SPEED;
-	}
-#endif
+	g_velocity += D_GRAVITY;
+	velocity.y += g_velocity * delta_second;
 
 	//状態別の更新処理を行う
 	state->Update(delta_second);
 
 	//移動の実行
-	location += velocity;
+	__super::Movement(delta_second);
 
 	//y600.0f地点を地面と仮定
 	if (location.y > 600.0f)
 	{
 		location.y = 600.0f;
 		g_velocity = 0.0f;
-		velocity = 0.0f;
 	}
 
 	//x0.0f地点を壁と仮定
 	if (location.x < 0.0f + box_size.x)
 	{
 		location.x = 0.0f + box_size.x;
-		velocity = 0.0f;
 	}
 
 	//背景スクロールが右端に着いたら移動範囲を拡大する
 	if (screen_end == false)
 	{
-		//x400.0f地点を壁と仮定
+		//ウィンドウのx480.0f地点を壁と仮定
 		if (location.x > 480.0f - (box_size.x * 2 ))
 		{
 			location.x = 480.0f - (box_size.x * 2);
-			velocity = 0.0f;
+			velocity.x = 0.0f;
 		}
 	}
 	else
 	{
-		//x960.0f地点を壁と仮定
+		GameObjectManager* mag = Singleton<GameObjectManager>::GetInstance();
+		mag->DestroyGameObject(this);
+		//ウィンドウのx960.0f地点を壁と仮定
 		if (location.x > 960.0f - box_size.x)
 		{
 			location.x = 960.0f - box_size.x;
-			velocity = 0.0f;
 		}
 	}
 }
@@ -153,8 +149,17 @@ void Player::Draw(const Vector2D& screen_offset) const
 	//状態別の描画処理を行う
 	state->Draw();
 
+	if (is_huge == false)
+	{
+		DrawRotaGraphF(location.x, location.y, 1.5, 0.0, image, TRUE);
+	}
+	else
+	{
+		DrawRotaGraphF(location.x, location.y - D_OBJECT_SIZE, 1.5, 0.0, image, TRUE);
+	}
+
 	//親クラスの描画処理を行う
-	__super::Draw(screen_offset);
+	//__super::Draw(screen_offset);
 
 	DrawString(0, 120, "プレイヤーの描画ok", GetColor(255, 255, 255), TRUE);
 }

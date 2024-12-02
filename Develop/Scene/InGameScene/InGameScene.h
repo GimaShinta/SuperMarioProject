@@ -6,7 +6,7 @@
 class InGameScene : public SceneBase
 {
 private:
-	// オブジェクトの情報を格納する構造体
+	// オブジェクト情報を格納する構造体
 	struct MapObjectData 
 	{
 		char mode;
@@ -21,9 +21,11 @@ private:
 	class Kuribo* kuribo;
 	class Nokonoko* nokonoko;
 	class Fireboll* fireboll;
+	class Ground* ground;
 
 private:
 	std::vector<MapObjectData> map_object;
+	std::vector<Ground*> grounds;
 	std::vector<int> back_ground_images;
 
 private:
@@ -34,7 +36,9 @@ private:
 	int back_ground_image3;
 	Vector2D screen_location;
 	Vector2D draw_location;
+	Vector2D camera_location;
 	bool screen_end;
+	bool is_scroll;
 
 public:
 	InGameScene();
@@ -65,5 +69,8 @@ private:
 	void LoadStageMapCSV();
 	//オブジェクト読込み
 	void LoadStageMapObject();
+
+private:
+	Vector2D ChengeLocation(const Vector2D& pos);
 };
 

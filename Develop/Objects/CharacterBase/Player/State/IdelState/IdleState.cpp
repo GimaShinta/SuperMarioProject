@@ -5,6 +5,7 @@
 #include "../Enum/PlayerState.h"
 
 #include "../../../../../Utility/InputManager.h"
+#include "../../../../../Utility/ResourceManager.h"
 
 IdleState::IdleState(Player* p) :
 	PlayerStateBase(p)
@@ -19,6 +20,10 @@ void IdleState::Initialize()
 {
 	//速度を0にする
 	player->velocity = 0.0f;
+
+	//画像の設定
+	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
+	state_image = rm->GetImages("Resource/Images/Enemy/kuribo.png", 3, 3, 1, 32, 32)[0];
 }
 
 void IdleState::Update(float delta_second)
@@ -55,6 +60,9 @@ void IdleState::Draw() const
 		x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
 
 	DrawString(200, 120, "プレイヤー停止中", GetColor(255, 255, 255), TRUE);
+
+	DrawRotaGraphF(player->GetLocation().x, player->GetLocation().y, 1.5, 0.0, state_image, TRUE);
+
 }
 
 void IdleState::Finalize()

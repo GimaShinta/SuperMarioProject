@@ -133,8 +133,6 @@ void GameObjectManager::CheckDesroyObject()
 				}
 			}
 		}
-		// “®“I”z—ñ‚ÌŠJ•ú
-		game_object.clear();
 	}
 }
 

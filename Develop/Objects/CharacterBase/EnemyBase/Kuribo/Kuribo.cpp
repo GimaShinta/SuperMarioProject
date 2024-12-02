@@ -17,6 +17,7 @@ void Kuribo::Initialize()
 	//判定サイズの設定
 	box_size = Vector2D(24.0f);
 	is_mobility = true;
+	velocity.x = 0.1f;
 
 	//画像の設定
 	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
@@ -31,6 +32,8 @@ void Kuribo::Initialize()
 //更新処理
 void Kuribo::Update(float delata_second)
 {
+	//移動の実行
+	location.x -= velocity.x;
 }
 
 //描画処理

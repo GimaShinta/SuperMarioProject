@@ -29,12 +29,12 @@ void RunState::Update(float delta_second)
 	//ˆÚ“®ˆ—
 	if (input->GetKey(KEY_INPUT_LEFT))
 	{
-		this->player->velocity.x -= 0.3f;
+		this->player->velocity.x -= 1.0f;
 		old_location = 0.0f;
 	}
 	else if (input->GetKey(KEY_INPUT_RIGHT))
 	{
-		this->player->velocity.x += 0.3f;
+		this->player->velocity.x += 1.0f;
 		old_location = 0.0f;
 	}
 

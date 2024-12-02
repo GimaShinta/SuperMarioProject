@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 
+// オブジェクトのタイプ
 enum eObjectType
 {
 	eNone,
@@ -15,6 +16,7 @@ enum eObjectType
 	eItem,
 };
 
+// 進行方向
 enum eDirection
 {
 	UP,

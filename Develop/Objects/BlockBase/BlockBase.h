@@ -3,6 +3,9 @@
 
 class BlockBase : public GameObjectBase
 {
+protected:
+	bool is_scroll;
+	Vector2D velocity;
 public:
 	BlockBase();
 	~BlockBase();
@@ -15,5 +18,8 @@ public:
 
 public:
 	virtual void OnHitCollision(GameObjectBase* hit_object) override;
+
+public:
+	void SetScroll(float velo);
 };
 

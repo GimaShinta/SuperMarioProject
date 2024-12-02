@@ -19,10 +19,6 @@ enum eInputState
 class InputManager : public Singleton<class T>
 {
 private:
-	// 自クラスのポインタ（実体をアドレスの先で保有）
-	static InputManager* instance;
-
-private:
 	// キー入力情報
 	char now_key[D_KEYCODE_MAX];		// 現在の入力値
 	char old_key[D_KEYCODE_MAX];		// 前回の入力値
@@ -34,9 +30,6 @@ private:
 	Vector2D stick[2];					// スティック入力値（-1.0f～1.0f）
 
 public:
-	InputManager();
-	~InputManager();
-
 	//インスタンスの削除
 	static void DeleteInstance();
 

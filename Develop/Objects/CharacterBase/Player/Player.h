@@ -33,6 +33,7 @@ public:
 	bool is_star;
 	bool is_destroy;
 	bool screen_end;
+	bool is_huge;
 	Vector2D p_box_size[2];
 
 private:

@@ -31,4 +31,10 @@ void CharacterBase::OnHitCollision(GameObjectBase* hit_object)
 
 void CharacterBase::Movement(float delta_second)
 {
+	location += velocity * delta_second;
+}
+
+void CharacterBase::SetVelocity(const Vector2D& velo)
+{
+	this->velocity = velo;
 }

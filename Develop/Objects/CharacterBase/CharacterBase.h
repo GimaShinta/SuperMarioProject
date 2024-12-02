@@ -28,5 +28,6 @@ public:
 
 public:
 	virtual void Movement(float delta_second);
+	void SetVelocity(const Vector2D& velo);
 };
 

@@ -10,9 +10,6 @@
 class ResourceManager : public Singleton<class T>
 {
 private:
-	// 自クラスのポインタ（実体をアドレスの先で保有）
-	//static ResourceManager* instance;
-
 	std::map<std::string, std::vector<int>> images_container;	// 画像コンテナ
 	std::map<std::string, int> sounds_container;				// 音源コンテナ
 

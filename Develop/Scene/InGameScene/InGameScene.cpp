@@ -8,9 +8,17 @@
 
 #include "../../Objects/CharacterBase/Player/Player.h"
 #include "../../Objects/CharacterBase/EnemyBase/Kuribo/Kuribo.h"
+#include "../../Objects/CharacterBase/EnemyBase/Nokonoko/Nokonoko.h"
+#include "../../Objects/BlockBase/Ground/Ground.h"
 
 #include <fstream>
 #include <iostream>
+
+#define SCROLL_SPEED 300.0f
+#define TOTAL_BLOCK_X 211
+#define TOTAL_BLOCK_Y 30
+
+//カメラ座標を求めてから生成と破棄をできればok
 
 InGameScene::InGameScene() 
 	: player(nullptr)
@@ -21,6 +29,7 @@ InGameScene::InGameScene()
 	, back_ground_image(NULL)
 	, screen_location(0)
 	, screen_end(false)
+	, is_scroll(false)
 {
 }
 
@@ -31,7 +40,7 @@ InGameScene::~InGameScene()
 //初期化処理
 void InGameScene::Initialize()
 {
-	//背景ステージ読込み
+	//ステージ読込み
 	LoadStageMapCSV();
 	//オブジェクト読込み
 	LoadStageMapObject();
@@ -45,6 +54,7 @@ void InGameScene::Initialize()
 	// 背景画像の初期座標設定
 	screen_location = D_OBJECT_SIZE;
 
+	camera_location = (D_WIN_MAX_X / 2.0f, D_WIN_MAX_Y / 2.0f);
 }
 
 /// <summary>
@@ -57,22 +67,32 @@ eSceneType InGameScene::Update(float delta_second)
 	// 自クラスのポインタ（実体をアドレスの先で保有）
 	GameObjectManager* obj_manager = Singleton<GameObjectManager>::GetInstance();
 	obj_manager->Update(delta_second);
-	
 
+	// スクロール最大値を設定
+	float max_screen = -((TOTAL_BLOCK_X * (D_OBJECT_SIZE * 2)) - (D_WIN_MAX_X + D_OBJECT_SIZE));
+	
 	// プレイヤーが移動状態だったら
 	if (player->GetPlayerState() == ePlayerState::RUN)
 	{
 		// プレイヤーのx座標が480-boxsize以上になったら背景スクロールを開始
-		if (player->GetLocation().x >= 480.0f - (player->GetBoxSize().x * 2))
+		if (player->GetLocation().x >= (D_WIN_MAX_X / 2) - (player->GetBoxSize().x * 2))
 		{
 			// スクロールスピード
-			screen_location.x -= 0.3f;
+			screen_location.x -= SCROLL_SPEED * delta_second;
+			for (Ground* ground : grounds) 
+			{
+				ground->SetScroll(ground->GetLocation().x - (SCROLL_SPEED * delta_second));
+			}
 		}
 	}
 
-	// スクロール最大値を設定
-	// 211は横のブロック数
-	float max_screen = -((211 * (D_OBJECT_SIZE * 2)) - (D_WIN_MAX_X + D_OBJECT_SIZE));
+	// 地面のスクロールを止める
+	// 座標はブロック数の半分で、そこからさらにウィンドウに表示できるブロック数を引き、値に変換する
+	float scroll_end = -((56.0f / 2.0f) - 20.0f) * (D_OBJECT_SIZE * 2.0f);
+	if (ground->GetLocation().x <= scroll_end)
+	{
+		ground->SetScroll(scroll_end);
+	}
 
 	// 背景画像が右端までいったら止める
 	if (screen_location.x <= max_screen)
@@ -105,7 +125,7 @@ eSceneType InGameScene::Update(float delta_second)
 //描画処理
 void InGameScene::Draw()
 {
-	// csvから読み込んだ画像情報の配列をもとに描画する
+	// ステージ読込みで作成したオブジェクト情報の配列から描画する
 	for (int i = 0; i < map_object.size(); i++)
 	{
 		// csvから読み込んだ情報を利用できるようにする
@@ -117,21 +137,22 @@ void InGameScene::Draw()
 			screen_location.y = D_OBJECT_SIZE;
 			back_ground_image = back_ground_image1;
 			break;
-		case 'G':
-			screen_location.y = D_OBJECT_SIZE + ((D_OBJECT_SIZE * 2) * object.spos_y);
-			back_ground_image = back_ground_image2;
-			break;
+		//case 'G':
+		//	screen_location.y = D_OBJECT_SIZE + ((D_OBJECT_SIZE * 2) * object.spos_y);
+		//	back_ground_image = back_ground_image2;
+		//	break;
 		default:
 			continue;
 		}
 
+		// 背景ステージの描画
 		// 縦のブロック数分繰り返す
 		for (int j = 0; j < object.y_size; j++)
 		{
 			// 横のブロック数分繰り返す
 			for (int n = 0; n < object.x_size; n++)
 			{
-				DrawRotaGraph(screen_location.x + ((D_OBJECT_SIZE * 2) * n), screen_location.y + ((D_OBJECT_SIZE * 2) * j), 1.5, 0.0, back_ground_image, TRUE);
+				DrawRotaGraph(screen_location.x + ((D_OBJECT_SIZE * 2) * object.spos_x) + ((D_OBJECT_SIZE * 2) * n), screen_location.y + ((D_OBJECT_SIZE * 2) * j), 1.5, 0.0, back_ground_image, TRUE);
 			}
 		}
 	}
@@ -160,11 +181,11 @@ const eSceneType InGameScene::GetNowSceneType() const
 	return eSceneType::eInGame;
 }
 
-//ステージ背景読込み
+//ステージ読込み
 void InGameScene::LoadStageMapCSV()
 {
 	// 読み込むファイル名
-	std::string file_name = "Resource/Map/Map.csv";
+	std::string file_name = "Resource/Map/StageMap.csv";
 	// 指定ファイルを読み込む
 	std::ifstream ifs(file_name);
 
@@ -176,10 +197,11 @@ void InGameScene::LoadStageMapCSV()
 
 	// ファイルから1行ずつ読み込む
 	std::string line;
-	// 読み込んだデータをmapObjectsに格納
+	// 生成するオブジェクト情報を生成
 	MapObjectData data;
 	while (std::getline(ifs, line))
 	{
+		// 読み込んだ文字と値を代入する
 		sscanf_s(
 			line.c_str(),
 			"%c,%d,%d,%d,%d",
@@ -188,22 +210,83 @@ void InGameScene::LoadStageMapCSV()
 			&data.spos_x, &data.spos_y
 		);
 
+		// 値を代入されたオブジェクト情報を配列に挿入
 		map_object.push_back(data);
 	}
 }
 
-//オブジェクト読込み
+//オブジェクト生成
 void InGameScene::LoadStageMapObject()
 {
 	//インスタンスの取得
 	GameObjectManager* obj_m = Singleton<GameObjectManager>::GetInstance();
 
-	//プレイヤーの生成
+#if 0
+
+	// プレイヤーの生成
 	Vector2D generate_location = Vector2D(200.0f, 600.0f);
 	player = obj_m->CreateObject<Player>(generate_location);
 
-	//エネミーの生成
+	// エネミーの生成
 	generate_location = Vector2D(800.0f, 600.0f);
 	kuribo = obj_m->CreateObject<Kuribo>(generate_location);
+
+	// エネミーの生成
+	generate_location = Vector2D(700.0f, 600.0f - D_OBJECT_SIZE);
+	nokonoko = obj_m->CreateObject<Nokonoko>(generate_location);
+
+	// 地面の生成
+	generate_location = Vector2D(300.0f + D_OBJECT_SIZE, 720.0f - (D_OBJECT_SIZE * 5));
+	ground = obj_m->CreateObject<Ground>(generate_location);
+#else
+
+	// ステージ読込みで作成したオブジェクト情報の配列から描画する
+	for (int i = 0; i < map_object.size(); i++)
+	{
+		// csvから読み込んだ情報を利用できるようにする
+		const MapObjectData& object = map_object[i];
+
+		// オブジェクトの生成座標
+		Vector2D generate_location;
+
+		// 最初の文字列を見て代入する値を変える
+		switch (object.mode)
+		{
+		case 'P':
+			// プレイヤーの生成
+			generate_location = Vector2D(object.spos_x * (D_OBJECT_SIZE * 2), (object.spos_y * (D_OBJECT_SIZE * 2))) - D_OBJECT_SIZE;
+			player = obj_m->CreateObject<Player>(generate_location);
+			break;
+		case 'K':
+			// エネミーの生成
+			generate_location = Vector2D(object.spos_x * (D_OBJECT_SIZE * 2), (object.spos_y * (D_OBJECT_SIZE * 2))) - D_OBJECT_SIZE;
+			kuribo = obj_m->CreateObject<Kuribo>(generate_location);
+			break;
+		case 'G':
+			// 地面を1つのオブジェクトとして生成する
+			generate_location = Vector2D((object.x_size * D_OBJECT_SIZE) + (object.spos_x * (D_OBJECT_SIZE * 2)), (object.spos_y * (D_OBJECT_SIZE * 2)) + (D_OBJECT_SIZE * 2));
+			ground = obj_m->CreateObject<Ground>(generate_location);
+			// 地面の当たり判定の設定
+			ground->SetGroundData(object.x_size, object.y_size);
+			// 複数利用できるように配列で管理
+			grounds.push_back(ground);
+			break;
+		default:
+			continue;
+		}
+	}
+#endif
+}
+
+// スクリーン座標に変換
+Vector2D InGameScene::ChengeLocation(const Vector2D& pos)
+{
+	Vector2D screen_origin_position =
+	{
+		camera_location.x - D_WIN_MAX_X / 2.0f,
+		camera_location.y - D_WIN_MAX_Y / 2.0f
+	};
+	Vector2D screen_position = Vector2D(pos.x - screen_origin_position.x, pos.y - screen_origin_position.y);
+	return screen_location;
 }
 

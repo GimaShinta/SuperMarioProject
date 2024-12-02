@@ -15,6 +15,7 @@ TitleScene::~TitleScene()
 //‰Šú‰»ˆ—
 void TitleScene::Initialize()
 {
+	// ‰æ‘œİ’è
 	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
 	back_ground_image = rm->GetImages("Resource/Images/title.png")[0];
 }
