@@ -30,7 +30,6 @@ private:
 	Vector2D stick[2];					// スティック入力値（-1.0f～1.0f）
 
 public:
-	//インスタンスの削除
 	static void DeleteInstance();
 
 public:

@@ -98,7 +98,6 @@ void Application::Run()
 void Application::ShutDown()
 {
 	// Singletonのインスタンスを解放する
-	InputManager::DeleteInstance();
 	ResourceManager::DeleteInstance();
 	SceneManager::DeleteInstance();
 

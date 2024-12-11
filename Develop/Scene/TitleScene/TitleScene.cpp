@@ -57,6 +57,7 @@ void TitleScene::Draw()
 //I—¹ˆ—
 void TitleScene::Finalize()
 {
+	InputManager::DeleteInstance();
 }
 
 //Œ»İ‚ÌƒV[ƒ“î•ñ‚ğæ“¾

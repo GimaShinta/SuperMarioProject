@@ -10,7 +10,6 @@ void InputManager::DeleteInstance()
 	// インスタンスが存在している場合、削除する
 	if (instance != nullptr)
 	{
-		//インスタンスの削除
 		delete instance;
 		instance = nullptr;
 	}

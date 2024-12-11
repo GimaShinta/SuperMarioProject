@@ -14,6 +14,9 @@ private:
 	class JumpState* jump;
 	class SquatState* squat;
 
+public:
+	static void DeleteInstance();
+
 private:
 	//‰Šú‰»ˆ—
 	void Initialize(class Player& player);

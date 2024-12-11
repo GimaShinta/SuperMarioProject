@@ -31,9 +31,9 @@ public:
 	int zanki;
 	int coin_count;
 	bool is_star;
-	bool is_destroy;
 	bool screen_end;
 	bool is_huge;
+	bool flip_flag;
 	Vector2D p_box_size[2];
 
 private:
@@ -44,7 +44,7 @@ private:
 	ePlayerLooksState now_looks_state;
 
 private:
-	std::vector<int> nomalmario_nums = { 0,1,2,1 };
+	std::vector<int> nomalmario_nums = { 1,2,3,2 };
 	std::vector<int> dekamario_nums = { 2,3,4,3 };
 	int firemario_num[2];
 	int growthmario_num[2];
@@ -94,5 +94,6 @@ public:
 	Vector2D& GetBoxSize();
 	ePlayerState GetPlayerState() const;
 	void SetScreenEnd(bool screen_end);
+	Vector2D GetVelocity();
 };
 

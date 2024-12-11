@@ -22,7 +22,7 @@ void Brick::Initialize()
 
 	//ìñÇΩÇËîªíËÇÃê›íË
 	collision.is_blocking = true;
-	collision.object_type = eObjectType::eGround;
+	collision.object_type = eObjectType::eBlock;
 	collision.hit_object_type.push_back(eObjectType::ePlayer);
 	collision.hit_object_type.push_back(eObjectType::eEnemy);
 }

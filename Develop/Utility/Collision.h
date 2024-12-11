@@ -13,6 +13,7 @@ enum eObjectType
 	eFireball,
 	eEnemy,
 	eGround,
+	eBlock,
 	eItem,
 };
 
@@ -57,4 +58,3 @@ public:
 /// <param name="c2">Œ`ó‚Ìî•ñ2</param>
 /// <returns>“–‚½‚Á‚Ä‚¢‚é‚È‚çAtrue</returns>
 bool IsCheckCollision(const BoxCollision& c1, const BoxCollision& c2);
-

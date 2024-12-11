@@ -10,6 +10,19 @@ GameObjectManager::~GameObjectManager()
 	Finalize();
 }
 
+void GameObjectManager::DeleteInstance()
+{
+	// 自クラスのポインタ（実体をアドレスの先で保有）
+	static GameObjectManager* instance = nullptr;
+
+	// インスタンスが存在している場合、削除する
+	if (instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+}
+
 //初期化処理
 void GameObjectManager::Initialize()
 {
@@ -30,13 +43,13 @@ void GameObjectManager::Update(const float& delta_second)
 	// 当たり判定確認処理
 	for (int i = 0; i < game_object.size(); i++)
 	{
-		//移動の許可
+		// 移動の許可
 		if (game_object[i]->GetMobility() == false)
 		{
 			continue;
 		}
 
-		//見ているオブジェクトが同じであれば当たり判定を無くす
+		// 見ているオブジェクトが同じであれば当たり判定を無くす
 		for (int j = 0; j < game_object.size(); j++)
 		{
 			if (i == j)
@@ -166,36 +179,6 @@ void GameObjectManager::DestroyGameObject(GameObjectBase* target)
 //当たり判定のチェック
 void GameObjectManager::CheckCollision(GameObjectBase* target, GameObjectBase* partner)
 {
-#if 0
-	// ヌルポチェック
-	if (target == nullptr || partner == nullptr)
-	{
-		return;
-	}
-
-	//２つのオブジェクトの処理を取得
-	Vector2D diff = target->GetLocation() - partner->GetLocation();
-
-	//２つのオブジェクトの当たり判定の大きさを取得
-	Vector2D box_size = ((target->GetBoxSize() + partner->GetBoxSize()) / 2.0f);
-
-	BoxCollision tc = target->GetCollision();
-	BoxCollision pc = partner->GetCollision();
-
-	// 当たり判定が有効か確認する
-	if (tc.IsCheckHitTarget(pc.object_type) || pc.IsCheckHitTarget(tc.object_type))
-	{
-		//距離より大きさが大きい場合、Hit判定をする
-		if ((fabsf(diff.x) < box_size.x)&& (fabsf(diff.y) < box_size.y))
-		{
-			//当たったことをオブジェクトに通知する
-			target->OnHitCollision(partner);
-			partner->OnHitCollision(target);
-		}
-	}
-
-#else
-
 	// 中身が入っているかをチェック
 	if (target == nullptr || partner == nullptr)
 	{
@@ -228,8 +211,6 @@ void GameObjectManager::CheckCollision(GameObjectBase* target, GameObjectBase* p
 		}
 
 	}
-
-#endif
 }
 
 const Vector2D GameObjectManager::GetScreenOffset() const

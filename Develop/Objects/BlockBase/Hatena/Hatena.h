@@ -3,6 +3,9 @@
 
 class Hatena : public BlockBase
 {
+private:
+	std::vector<int> hatena_animation;
+
 public:
 	Hatena();
 	~Hatena();

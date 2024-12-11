@@ -17,11 +17,12 @@ void Kuribo::Initialize()
 	//判定サイズの設定
 	box_size = Vector2D(24.0f);
 	is_mobility = true;
-	velocity.x = 0.1f;
+	velocity.x = 100.0f;
 
 	//画像の設定
 	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
-	image = rm->GetImages("Resource/Images/Enemy/kuribo.png", 3, 3, 1, 32, 32)[0];
+	emove_animation = rm->GetImages("Resource/Images/Enemy/kuribo.png", 3, 3, 1, 32, 32);
+	image = emove_animation[0];
 
 	//当たり判定の設定
 	collision.is_blocking = true;
@@ -30,10 +31,15 @@ void Kuribo::Initialize()
 }
 
 //更新処理
-void Kuribo::Update(float delata_second)
+void Kuribo::Update(float delta_second)
 {
-	//移動の実行
-	location.x -= velocity.x;
+	// アニメーション制御
+	GameObjectBase::AnimationControl(delta_second, emove_animation, emove_nums);
+
+	// 移動の実行
+	location.x -= velocity.x * delta_second;
+
+	__super::Update(delta_second);
 }
 
 //描画処理

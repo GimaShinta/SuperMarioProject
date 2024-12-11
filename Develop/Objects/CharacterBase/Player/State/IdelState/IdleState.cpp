@@ -28,6 +28,7 @@ void IdleState::Initialize()
 
 void IdleState::Update(float delta_second)
 {
+	// インスタンスの取得
 	InputManager* input = Singleton<InputManager>::GetInstance();
 
 	//移動状態に遷移
@@ -49,6 +50,7 @@ void IdleState::Update(float delta_second)
 	}
 }
 
+// 描画処理
 void IdleState::Draw() const
 {
 	//座標情報を整数値に変換
@@ -65,15 +67,18 @@ void IdleState::Draw() const
 
 }
 
+// 終了時処理
 void IdleState::Finalize()
 {
 }
 
+// 現在の見た目状態の取得
 ePlayerLooksState IdleState::GetLooksState() const
 {
 	return ePlayerLooksState();
 }
 
+// 現在の移動状態の取得
 ePlayerState IdleState::GetState() const
 {
 	return ePlayerState::IDLE;

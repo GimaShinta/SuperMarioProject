@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Application\Application.cpp" />
     <ClCompile Include="AppMain.cpp" />
+    <ClCompile Include="Objects\BlockBase\Kai\Kai.cpp" />
     <ClCompile Include="Objects\CharacterBase\EnemyBase\EnemyBase.cpp" />
     <ClCompile Include="Objects\CharacterBase\EnemyBase\Kuribo\Kuribo.cpp" />
     <ClCompile Include="Objects\CharacterBase\EnemyBase\Nokonoko\Nokonoko.cpp" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Application.h" />
+    <ClInclude Include="Objects\BlockBase\Kai\Kai.h" />
     <ClInclude Include="Objects\CharacterBase\EnemyBase\EnemyBase.h" />
     <ClInclude Include="Objects\CharacterBase\EnemyBase\Kuribo\Kuribo.h" />
     <ClInclude Include="Objects\CharacterBase\EnemyBase\Nokonoko\Nokonoko.h" />

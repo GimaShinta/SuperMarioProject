@@ -12,6 +12,9 @@ protected:
 		MOVE,
 		DESTROTY
 	};
+protected:
+	std::vector<int> emove_animation;
+	std::vector<int> emove_nums = { 0,1 };
 
 public:
 	EnemyBase();
@@ -28,5 +31,7 @@ public:
 
 //public:
 //	void Movement(float delta_second);
+
+	void SetScroll(float scroll);
 };
 

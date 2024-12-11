@@ -24,6 +24,7 @@ protected:
 
 public:
 	bool is_mobility;               //
+	bool is_destroy;
 
 public:
 	GameObjectBase();

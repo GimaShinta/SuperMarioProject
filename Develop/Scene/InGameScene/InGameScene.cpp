@@ -10,11 +10,16 @@
 #include "../../Objects/CharacterBase/EnemyBase/Kuribo/Kuribo.h"
 #include "../../Objects/CharacterBase/EnemyBase/Nokonoko/Nokonoko.h"
 #include "../../Objects/BlockBase/Ground/Ground.h"
+#include "../../Objects/BlockBase/Hatena/Hatena.h"
+#include "../../Objects/BlockBase/Brick/Brick.h"
+#include "../../Objects/BlockBase/Kai/Kai.h"
+#include "../../Objects/BlockBase/BlockBase.h"
+#include "../../Objects/CharacterBase/EnemyBase/EnemyBase.h"
 
 #include <fstream>
 #include <iostream>
 
-#define SCROLL_SPEED 300.0f
+#define SCROLL_MAX_SPEED 500.0f
 #define TOTAL_BLOCK_X 211
 #define TOTAL_BLOCK_Y 30
 
@@ -44,12 +49,8 @@ void InGameScene::Initialize()
 	LoadStageMapCSV();
 	//オブジェクト読込み
 	LoadStageMapObject();
-
-	//背景読込み
-	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
-	back_ground_image1 = rm->GetImages("Resource/Images/sora.png")[0];
-	back_ground_image2 = rm->GetImages("Resource/Images/Block/floor.png")[0];
-	back_ground_image3 = rm->GetImages("Resource/Images/sora_g.png")[0];
+	// 画像の読込み
+	LoadImages();
 
 	// 背景画像の初期座標設定
 	screen_location = D_OBJECT_SIZE;
@@ -68,33 +69,39 @@ eSceneType InGameScene::Update(float delta_second)
 	GameObjectManager* obj_manager = Singleton<GameObjectManager>::GetInstance();
 	obj_manager->Update(delta_second);
 
-	// スクロール最大値を設定
-	float max_screen = -((TOTAL_BLOCK_X * (D_OBJECT_SIZE * 2)) - (D_WIN_MAX_X + D_OBJECT_SIZE));
-	
-	// プレイヤーが移動状態だったら
-	if (player->GetPlayerState() == ePlayerState::RUN)
+	// プレイヤーのx座標が480-boxsize以上になったら背景スクロールを開始
+	if (player->GetLocation().x >= (D_WIN_MAX_X / 2))
 	{
-		// プレイヤーのx座標が480-boxsize以上になったら背景スクロールを開始
-		if (player->GetLocation().x >= (D_WIN_MAX_X / 2) - (player->GetBoxSize().x * 2))
+		// 右方向に速度がある時のみスクロールする
+		if (player->velocity.x > 0)
 		{
-			// スクロールスピード
-			screen_location.x -= SCROLL_SPEED * delta_second;
-			for (Ground* ground : grounds) 
+			// プレイヤーのスピードに合わせてスクロール
+			Vector2D p_speed = player->GetVelocity();
+			// 背景用スクロール
+			screen_location.x -= p_speed.x * delta_second;
+			// オブジェクト用スクロール
+			for (BlockBase* block : blocks)
 			{
-				ground->SetScroll(ground->GetLocation().x - (SCROLL_SPEED * delta_second));
+				block->SetScroll(block->GetLocation().x - (p_speed.x * delta_second));
+			}
+			for (EnemyBase* enemy : enemys)
+			{
+				enemy->SetScroll(enemy->GetLocation().x - (p_speed.x * delta_second));
 			}
 		}
 	}
 
-	// 地面のスクロールを止める
-	// 座標はブロック数の半分で、そこからさらにウィンドウに表示できるブロック数を引き、値に変換する
+	// オブジェクトブロック数の半分で、そこからさらにウィンドウに表示できるブロック数を引き、値に変換する
 	float scroll_end = -((56.0f / 2.0f) - 20.0f) * (D_OBJECT_SIZE * 2.0f);
-	if (ground->GetLocation().x <= scroll_end)
+	// 地面オブジェクトのスクロールを止める
+	if (ground->GetLocation().x < scroll_end)
 	{
 		ground->SetScroll(scroll_end);
 	}
 
-	// 背景画像が右端までいったら止める
+	// スクロール最大値を設定
+	float max_screen = -((TOTAL_BLOCK_X * (D_OBJECT_SIZE * 2)) - (D_WIN_MAX_X + D_OBJECT_SIZE));
+	// 背景画像が右端までいったら画面内に収まるように止める
 	if (screen_location.x <= max_screen)
 	{
 		screen_end = true;
@@ -103,6 +110,16 @@ eSceneType InGameScene::Update(float delta_second)
 
 	//背景画像が右端に着いたかをプレイヤーに通知
 	player->SetScreenEnd(screen_end);
+
+	// 速度の制限
+	if (player->velocity.x >= SCROLL_MAX_SPEED)
+	{
+		player->velocity.x = SCROLL_MAX_SPEED;
+	}
+	else if (player->velocity.x <= -SCROLL_MAX_SPEED)
+	{
+		player->velocity.x = -SCROLL_MAX_SPEED;
+	}
 
 	//入力機能の取得
 	InputManager* input = Singleton<InputManager>::GetInstance();
@@ -130,17 +147,67 @@ void InGameScene::Draw()
 	{
 		// csvから読み込んだ情報を利用できるようにする
 		const MapObjectData& object = map_object[i];
+
+		// 位置情報の再設定
+		screen_location.y = (object.spos_y * (D_OBJECT_SIZE * 2)) - D_OBJECT_SIZE;
+
 		// 最初の文字列を見て代入する値を変える
 		switch (object.mode)
 		{
 		case 'S':
-			screen_location.y = D_OBJECT_SIZE;
-			back_ground_image = back_ground_image1;
+			back_ground_image = back_ground_sora;
 			break;
-		//case 'G':
-		//	screen_location.y = D_OBJECT_SIZE + ((D_OBJECT_SIZE * 2) * object.spos_y);
-		//	back_ground_image = back_ground_image2;
-		//	break;
+		case '0':
+			back_ground_image = back_ground_mountain[0];
+			break;
+		case '1':
+			back_ground_image = back_ground_mountain[1];
+			break;
+		case '2':
+			back_ground_image = back_ground_mountain[2];
+			break;
+		case '3':
+			back_ground_image = back_ground_mountain[3];
+			break;
+		case '4':
+			back_ground_image = back_ground_mountain[4];
+			break;
+		case '5':
+			back_ground_image = back_ground_mountain[5];
+			break;
+		case '6':
+			back_ground_image = back_ground_ha[0];
+			break;
+		case '7':
+			back_ground_image = back_ground_ha[1];
+			break;
+		case '8':
+			back_ground_image = back_ground_ha[2];
+			break;
+		case 'a':
+			back_ground_image = back_ground_cloud[0];
+			break;
+		case 'b':
+			back_ground_image = back_ground_cloud[1];
+			break;
+		case 'c':
+			back_ground_image = back_ground_cloud[2];
+			break;
+		case 'd':
+			back_ground_image = back_ground_cloud[3];
+			break;
+		case 'e':
+			back_ground_image = back_ground_cloud[4];
+			break;
+		case 'f':
+			back_ground_image = back_ground_cloud[5];
+			break;
+		case 'L':
+			back_ground_image = back_ground_blocks;
+			break;
+		case 'G':
+			back_ground_image = back_ground_block;
+			break;
 		default:
 			continue;
 		}
@@ -173,6 +240,11 @@ void InGameScene::Finalize()
 	GameObjectManager* gom = Singleton<GameObjectManager>::GetInstance();
 	//オブジェクト管理クラスの終了時処理を呼び出す
 	gom->Finalize();
+
+	// インスタンスの削除
+	ResourceManager::DeleteInstance();
+	GameObjectManager::DeleteInstance();
+	InputManager::DeleteInstance();
 }
 
 //現在のシーン情報
@@ -221,25 +293,6 @@ void InGameScene::LoadStageMapObject()
 	//インスタンスの取得
 	GameObjectManager* obj_m = Singleton<GameObjectManager>::GetInstance();
 
-#if 0
-
-	// プレイヤーの生成
-	Vector2D generate_location = Vector2D(200.0f, 600.0f);
-	player = obj_m->CreateObject<Player>(generate_location);
-
-	// エネミーの生成
-	generate_location = Vector2D(800.0f, 600.0f);
-	kuribo = obj_m->CreateObject<Kuribo>(generate_location);
-
-	// エネミーの生成
-	generate_location = Vector2D(700.0f, 600.0f - D_OBJECT_SIZE);
-	nokonoko = obj_m->CreateObject<Nokonoko>(generate_location);
-
-	// 地面の生成
-	generate_location = Vector2D(300.0f + D_OBJECT_SIZE, 720.0f - (D_OBJECT_SIZE * 5));
-	ground = obj_m->CreateObject<Ground>(generate_location);
-#else
-
 	// ステージ読込みで作成したオブジェクト情報の配列から描画する
 	for (int i = 0; i < map_object.size(); i++)
 	{
@@ -247,35 +300,81 @@ void InGameScene::LoadStageMapObject()
 		const MapObjectData& object = map_object[i];
 
 		// オブジェクトの生成座標
-		Vector2D generate_location;
+		Vector2D generate_location = Vector2D(object.spos_x * (D_OBJECT_SIZE * 2), (object.spos_y * (D_OBJECT_SIZE * 2))) - D_OBJECT_SIZE;
 
 		// 最初の文字列を見て代入する値を変える
 		switch (object.mode)
 		{
 		case 'P':
 			// プレイヤーの生成
-			generate_location = Vector2D(object.spos_x * (D_OBJECT_SIZE * 2), (object.spos_y * (D_OBJECT_SIZE * 2))) - D_OBJECT_SIZE;
 			player = obj_m->CreateObject<Player>(generate_location);
 			break;
 		case 'K':
 			// エネミーの生成
-			generate_location = Vector2D(object.spos_x * (D_OBJECT_SIZE * 2), (object.spos_y * (D_OBJECT_SIZE * 2))) - D_OBJECT_SIZE;
 			kuribo = obj_m->CreateObject<Kuribo>(generate_location);
+			enemys.push_back(kuribo);
+			break;
+		case 'H':
+			// ハテナブロックの生成
+			hatena = obj_m->CreateObject<Hatena>(generate_location);
+			// 複数利用できるように配列で管理
+			blocks.push_back(hatena);
+			break;
+		case 'B':
+			// 破壊ブロックの生成
+			brick = obj_m->CreateObject<Brick>(generate_location);
+			// 複数利用できるように配列で管理
+			blocks.push_back(brick);
+			break;
+		case 'I':
+			// 破壊ブロックの生成
+			generate_location = Vector2D((object.x_size * D_OBJECT_SIZE) + (object.spos_x * (D_OBJECT_SIZE * 2)), (object.spos_y * (D_OBJECT_SIZE * 2)));
+			kai = obj_m->CreateObject<Kai>(generate_location);
+			// 地面の当たり判定の設定
+			kai->SetGroundData(object.x_size, object.y_size);
+			// 複数利用できるように配列で管理
+			blocks.push_back(kai);
 			break;
 		case 'G':
 			// 地面を1つのオブジェクトとして生成する
-			generate_location = Vector2D((object.x_size * D_OBJECT_SIZE) + (object.spos_x * (D_OBJECT_SIZE * 2)), (object.spos_y * (D_OBJECT_SIZE * 2)) + (D_OBJECT_SIZE * 2));
+			generate_location = Vector2D((object.x_size * D_OBJECT_SIZE) + (object.spos_x * (D_OBJECT_SIZE * 2)), (object.spos_y * (D_OBJECT_SIZE * 2)));
 			ground = obj_m->CreateObject<Ground>(generate_location);
 			// 地面の当たり判定の設定
 			ground->SetGroundData(object.x_size, object.y_size);
 			// 複数利用できるように配列で管理
-			grounds.push_back(ground);
+			blocks.push_back(ground);
 			break;
 		default:
 			continue;
 		}
 	}
-#endif
+}
+
+void InGameScene::LoadImages()
+{
+	// 背景画像の読込み
+	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
+	back_ground_sora = rm->GetImages("Resource/Images/sora.png")[0];
+	back_ground_block = rm->GetImages("Resource/Images/Block/floor.png")[0];
+	back_ground_blocks = rm->GetImages("Resource/Images/Block/kai_block.png", 1, 1, 1, 32, 32)[0];
+	// 山の画像の読込み
+	back_ground_mountain[0] = rm->GetImages("Resource/Images/mountain_left.png")[0];
+	back_ground_mountain[1] = rm->GetImages("Resource/Images/mountain_right.png")[0];
+	back_ground_mountain[2] = rm->GetImages("Resource/Images/mountain_up.png")[0];
+	back_ground_mountain[5] = rm->GetImages("Resource/Images/mountain_surface2.png")[0];
+	back_ground_mountain[4] = rm->GetImages("Resource/Images/mountain_surface.png")[0];
+	back_ground_mountain[3] = rm->GetImages("Resource/Images/mountain_surface1.png")[0];
+	// 葉の画像の読込み
+	back_ground_ha[0] = rm->GetImages("Resource/Images/ha0.png")[0];
+	back_ground_ha[1] = rm->GetImages("Resource/Images/ha1.png")[0];
+	back_ground_ha[2] = rm->GetImages("Resource/Images/ha2.png")[0];
+	// 雲の画像の読込み
+	back_ground_cloud[0] = rm->GetImages("Resource/Images/cloud1.png")[0];
+	back_ground_cloud[1] = rm->GetImages("Resource/Images/cloud2.png")[0];
+	back_ground_cloud[2] = rm->GetImages("Resource/Images/cloud3.png")[0];
+	back_ground_cloud[3] = rm->GetImages("Resource/Images/cloud6.png")[0];
+	back_ground_cloud[4] = rm->GetImages("Resource/Images/cloud5.png")[0];
+	back_ground_cloud[5] = rm->GetImages("Resource/Images/cloud4.png")[0];
 }
 
 // スクリーン座標に変換

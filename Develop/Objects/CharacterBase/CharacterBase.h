@@ -11,7 +11,6 @@ protected:
 
 public:
 	Vector2D velocity;
-	//Vector2D box_size = (0.0f);
 
 public:
 	CharacterBase();
@@ -28,6 +27,6 @@ public:
 
 public:
 	virtual void Movement(float delta_second);
-	void SetVelocity(const Vector2D& velo);
+	void SetVelocity(const Vector2D& velocity);
 };
 

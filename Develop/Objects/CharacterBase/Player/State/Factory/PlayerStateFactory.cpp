@@ -9,6 +9,19 @@
 
 PlayerStateFactory* factory = Singleton<PlayerStateFactory>::GetInstance();
 
+void PlayerStateFactory::DeleteInstance()
+{
+	// 自クラスのポインタ（実体をアドレスの先で保有）
+	static PlayerStateFactory* instance = nullptr;
+
+	// インスタンスが存在している場合、削除する
+	if (instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+}
+
 void PlayerStateFactory::Initialize(Player& player)
 {
 	idle = new IdleState(&player);

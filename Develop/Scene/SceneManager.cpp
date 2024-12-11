@@ -47,8 +47,7 @@ bool SceneManager::Update(float delta_second)
 	InputManager* input = Singleton<InputManager>::GetInstance();
 
 	// シーンの更新
-	Application* app = Singleton<Application>::GetInstance();
-	eSceneType next_scene_type = current_scene->Update(app->GetDeltaSecond());
+	eSceneType next_scene_type = current_scene->Update(delta_second);
 
 	// ゲームを終了するか確認する
 	if (next_scene_type == eSceneType::eXit ||
@@ -86,6 +85,7 @@ void SceneManager::Finalize()
 		delete current_scene;
 		current_scene = nullptr;
 	}
+	InputManager::DeleteInstance();
 }
 
 //シーンの切り替え

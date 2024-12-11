@@ -12,11 +12,16 @@ private:
 	std::vector<GameObjectBase*> create_object;
 	std::vector<GameObjectBase*> destroy_object;
 	std::vector<GameObjectBase*> game_object;
-	Vector2D screen_offset;
+	Vector2D screen_offset;// スクリーンオフセットはウィンドウの0,0位置からどれだけ離れているのかを判定するのに使える
+
 
 public:
 	GameObjectManager();
 	virtual ~GameObjectManager();
+
+public:
+	//インスタンスの削除
+	static void DeleteInstance();
 
 public:
 	//初期化処理

@@ -14,6 +14,7 @@ void CharacterBase::Initialize()
 
 void CharacterBase::Update(float delata_second)
 {
+	__super::Update(delata_second);
 }
 
 void CharacterBase::Draw(const Vector2D& screen_offset) const
@@ -34,7 +35,7 @@ void CharacterBase::Movement(float delta_second)
 	location += velocity * delta_second;
 }
 
-void CharacterBase::SetVelocity(const Vector2D& velo)
+void CharacterBase::SetVelocity(const Vector2D& velocity)
 {
-	this->velocity = velo;
+	this->velocity = velocity;
 }

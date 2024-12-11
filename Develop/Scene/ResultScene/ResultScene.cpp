@@ -52,6 +52,7 @@ void ResultScene::Draw()
 //I—¹ˆ—
 void ResultScene::Finalize()
 {
+	InputManager::DeleteInstance();
 }
 
 //Œ»İ‚ÌƒV[ƒ“î•ñ‚ğæ“¾
