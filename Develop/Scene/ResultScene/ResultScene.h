@@ -2,14 +2,13 @@
 
 #include "../SceneBase.h"
 
-//リザルトシーンクラス
+// リザルトシーンクラス
 class ResultScene : public SceneBase
 {
 private:
-	class Player* player;
-
-private:
-	int back_ground;
+	// マリオ画像
+	int mario_image;
+	// プレイヤー残機
 	int player_zanki;
 
 public:

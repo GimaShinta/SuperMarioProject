@@ -3,7 +3,7 @@
 #include "../Singleton.h"
 #include "SceneBase.h"
 
-//シーンマネージャークラス
+// シーンの生成と破棄管理クラス
 class SceneManager : public Singleton<class T>
 {
 private:

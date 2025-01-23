@@ -4,6 +4,8 @@
 class Mushroom : public ItemBase
 {
 public:
+	Vector2D velocity;
+public:
 	Mushroom();
 	~Mushroom();
 

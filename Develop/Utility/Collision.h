@@ -15,15 +15,7 @@ enum eObjectType
 	eGround,
 	eBlock,
 	eItem,
-};
-
-// 進行方向
-enum eDirection
-{
-	UP,
-	DOWN,
-	LEFT,
-	REGHT
+	eGoal
 };
 
 //当たり判定クラス
@@ -33,7 +25,7 @@ public:
 	bool						is_blocking;		// すり抜けフラグ
 	eObjectType					object_type;		// 自身のオブジェクトタイプ
 	std::vector<eObjectType>	hit_object_type;	// 適用するオブジェクトタイプ
-	Vector2D point[2];
+	Vector2D point[2];                              // オブジェクトの左上と右下の座標保持
 
 public:
 	BoxCollision() :

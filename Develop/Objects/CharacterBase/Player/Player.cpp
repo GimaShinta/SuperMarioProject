@@ -8,10 +8,7 @@
 
 #include <cstdlib>
 
-#define D_GRAVITY (9.80f)      //重力加速度(m/ss)
-
-/*でかくなったら埋まるからそれぞれで描画した方がいいかも*/
-
+#define D_GRAVITY (30.0f)      //重力加速度(m/ss)
 
 Player::Player() :
 	  zanki(0)
@@ -66,12 +63,12 @@ void Player::Update(float delta_second)
 	case ePlayerLooksState::NOMALMARIO:
 		is_huge = false;
 		// アニメーション制御
-		AnimationControl(delta_second, nomalmario_animation, nomalmario_nums, 5, NULL);
+		AnimationControl(delta_second, nomalmario_animation, nomalmario_nums, 5, NULL, 6);
 		break;
 	case ePlayerLooksState::DEKAMARIO:
 		is_huge = true;
 		// アニメーション制御
-		AnimationControl(delta_second, dekamario_animation, dekamario_nums, 6, 1);
+		AnimationControl(delta_second, dekamario_animation, dekamario_nums, 6, 1, NULL);
 		break;
 	case ePlayerLooksState::FIREMARIO:
 		is_huge = true;
@@ -81,8 +78,6 @@ void Player::Update(float delta_second)
 		break;
 	case ePlayerLooksState::STARDEKAMARIO:
 		is_huge = true;
-		break;
-	case ePlayerLooksState::DESTROYMARIO:
 		break;
 	}
 
@@ -137,10 +132,10 @@ void Player::Update(float delta_second)
 		}
 	}
 
-	// 移動の実行
+	// 移動を実行する関数の呼び出し
 	__super::Movement(delta_second);
 
-	// 画面外で削除する
+	// 画面外で削除する関数の呼び出し
 	__super::Update(delta_second);
 }
 
@@ -150,7 +145,7 @@ void Player::Update(float delta_second)
 /// <param name="screen_offset"></param>
 void Player::Draw(const Vector2D& screen_offset) const
 {
-	//状態別の描画処理を行う
+	// 状態別の描画処理を行う
 	state->Draw();
 
 	if (is_huge == false)
@@ -171,20 +166,23 @@ void Player::Draw(const Vector2D& screen_offset) const
 //終了時処理
 void Player::Finalize()
 {
-	//インスタンスの取得
+	// インスタンスの取得
 	PlayerStateFactory* factory = Singleton<PlayerStateFactory>::GetInstance();
 	factory->Finalize();
+	// インスタンスの削除
 	ResourceManager::DeleteInstance();
 	PlayerStateFactory::DeleteInstance();
 }
 
-//ヒット時処理
+/// <summary>
+/// ヒット時処理
+/// </summary>
+/// <param name="hit_object">当たったオブジェクト</param>
 void Player::OnHitCollision(GameObjectBase* hit_object)
 {
 	// インスタンスの取得
 	GameObjectManager* objm = Singleton<GameObjectManager>::GetInstance();
 
-	// めり込み量を見て比べる。xが優先されているように見える
 	//２つのオブジェクトの距離を取得
 	Vector2D diff = location - hit_object->GetLocation();
 
@@ -198,7 +196,7 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 	Vector2D p_velocity = velocity;
 
 	// 敵かブロックに当たった時
-	if (hit_object->GetCollision().object_type == eObjectType::eEnemy || hit_object->GetCollision().object_type == eObjectType::eBlock)
+	if (hit_object->GetCollision().object_type == eObjectType::eEnemy)
 	{
 		// 衝突方向の判定
 		if (Vector2D::Dot(normal, p_velocity) < 0)
@@ -223,13 +221,19 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 				{
 					// 左側から衝突
 					// 左側からの衝突時の処理
-					objm->DestroyGameObject(this);
+					// 死亡フラグ
+					is_destroy = true;
+					// タイプをNoneにして当たり判定を削除
+					collision.object_type = eObjectType::eNone;
 				}
 				else
 				{
 					// 右側から衝突
 					// 右側からの衝突時の処理
-					objm->DestroyGameObject(this);
+					// 死亡フラグ
+					is_destroy = true;
+					// タイプをNoneにして当たり判定を削除
+					collision.object_type = eObjectType::eNone;
 				}
 			}
 			else
@@ -239,13 +243,126 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 				{
 					// 上側から衝突
 					// 上側からの衝突時の処理
-					velocity.y -= 1000.0f;
+					velocity.y -= 1250.0f;
+
 				}
 				else
 				{
 					// 下側から衝突
 					// 下側からの衝突時の処理
-					objm->DestroyGameObject(this);
+					// 死亡フラグ
+					is_destroy = true;
+					// タイプをNoneにして当たり判定を削除
+					collision.object_type = eObjectType::eNone;
+				}
+			}
+		}
+	}
+	else if (hit_object->GetCollision().object_type == eObjectType::eGoal)
+	{
+		// 衝突方向の判定
+		if (Vector2D::Dot(normal, p_velocity) < 0)
+		{
+			// プレイヤーは衝突面から離れる方向に動いている
+			// 特に処理は不要
+		}
+		else
+		{
+			// プレイヤーは衝突面に向かって動いている
+			// 衝突方向をX軸、Y軸で比較
+			Vector2D x_axis(1.0f, 0.0f);
+			Vector2D y_axis(0.0f, 1.0f);
+
+			float dot_x = abs(Vector2D::Dot(normal, x_axis));
+			float dot_y = abs(Vector2D::Dot(normal, y_axis));
+
+			if (dot_x < dot_y)
+			{
+				// 主にX軸方向の衝突 (左または右)
+				if (direction.x < 0)
+				{
+					// 左側から衝突
+					// 左側からの衝突時の処理
+					location.x += normal.x * direction.x;
+					goal = true;
+				}
+				else
+				{
+					// 右側から衝突
+					// 右側からの衝突時の処理
+					location.x -= normal.x * direction.x;
+					goal = true;
+				}
+			}
+			else
+			{
+				// 主にY軸方向の衝突 (上または下)
+				if (direction.y < 0)
+				{
+					// 上側から衝突
+					// 上側からの衝突時の処理
+					location.y -= normal.y * direction.y;
+				}
+				else
+				{
+					// 下側から衝突
+					// 下側からの衝突時の処理
+					location.y += normal.y * direction.y;
+				}
+			}
+		}
+	}
+	else
+	{
+		// 衝突方向の判定
+		if (Vector2D::Dot(normal, p_velocity) < 0)
+		{
+			// プレイヤーは衝突面から離れる方向に動いている
+			// 特に処理は不要
+		}
+		else
+		{
+			// プレイヤーは衝突面に向かって動いている
+			// 衝突方向をX軸、Y軸で比較
+			Vector2D x_axis(1.0f, 0.0f);
+			Vector2D y_axis(0.0f, 1.0f);
+
+			float dot_x = abs(Vector2D::Dot(normal, x_axis));
+			float dot_y = abs(Vector2D::Dot(normal, y_axis));
+
+			if (dot_x < dot_y)
+			{
+				// 主にX軸方向の衝突 (左または右)
+				if (direction.x < 0)
+				{
+					// 左側から衝突
+					// 左側からの衝突時の処理
+					location.x += normal.x * direction.x;
+				}
+				else
+				{
+					// 右側から衝突
+					// 右側からの衝突時の処理
+					location.x -= normal.x * direction.x;
+
+				}
+			}
+			else
+			{
+				// 主にY軸方向の衝突 (上または下)
+				if (direction.y < 0)
+				{
+					// 上側から衝突
+					// 上側からの衝突時の処理
+					location.y -= normal.y * direction.y;
+					//location.y = hit_object->GetLocation().y - (hit_object->GetBoxSize().y + D_OBJECT_SIZE);
+					g_velocity = 0.0f;
+				}
+				else
+				{
+					// 下側から衝突
+					// 下側からの衝突時の処理
+					location.y += normal.y * direction.y;
 				}
 			}
 		}
@@ -272,7 +389,7 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 /// <param name="animation_num">アニメーション順序</param>
 /// <param name="n_jump">ジャンプ画像の位置</param>
 /// <param name="n_squat">しゃがみ画像の位置</param>
-void Player::AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num, int n_jump, int n_squat)
+void Player::AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num, int n_jump, int n_squat, int n_destroy)
 {
 	switch (now_state)
 	{
@@ -291,6 +408,10 @@ void Player::AnimationControl(float delta_second, std::vector<int>& animation_im
 		case ePlayerState::SQUAT:
 			// n_squat番目にあるしゃがみ画像を代入
 			image = animation_image[n_squat];
+			break;
+		case ePlayerState::DESTROY:
+			image = animation_image[n_destroy];
+			break;
 		case ePlayerState::NONE:
 			break;
 	}
@@ -319,6 +440,11 @@ bool Player::GetDestroy() const
 	return false;
 }
 
+// ゴールしているか
+bool Player::GetGoal()
+{
+	return goal;
+}
 
 // 次のシーンに切り替え
 void Player::SetNextState(ePlayerState next_state)
@@ -345,7 +471,14 @@ void Player::SetScreenEnd(bool screen_end)
 	this->screen_end = screen_end;
 }
 
+// プレイヤーの速度を取得
 Vector2D Player::GetVelocity()
 {
 	return velocity;
+}
+
+// プレイヤーのオブジェクトタイプを変更する
+void Player::SetObjectType(eObjectType type)
+{
+	collision.object_type = type;
 }

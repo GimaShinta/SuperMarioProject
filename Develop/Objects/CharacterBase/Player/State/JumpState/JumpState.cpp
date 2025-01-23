@@ -19,7 +19,7 @@ JumpState::~JumpState()
 void JumpState::Initialize()
 {
 	//移動処理
-	this->player->velocity.y -= 400.0f;         //ジャンプ力
+	this->player->velocity.y -= 600.0f;         //ジャンプ力
 	old_location = 0.0f;
 }
 
@@ -52,6 +52,11 @@ void JumpState::Update(float delta_second)
 		player->SetNextState(ePlayerState::IDLE);
 	}
 
+	if (player->is_destroy == true)
+	{
+		player->SetNextState(ePlayerState::DESTROY);
+	}
+
 	// 前回座標の更新
 	old_location = player->GetLocation();
 }
@@ -64,8 +69,8 @@ void JumpState::Draw() const
 	player->GetLocation().ToInt(&x, &y);
 
 	//描画
-	DrawBox(x - (int)(player->box_size.x), y - (int)(player->box_size.y),
-		x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
+	//DrawBox(x - (int)(player->box_size.x), y - (int)(player->box_size.y),
+	//	x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
 
 	DrawString(200, 120, "プレイヤージャンプ中", GetColor(255, 255, 255), TRUE);
 }

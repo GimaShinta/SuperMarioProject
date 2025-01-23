@@ -35,10 +35,6 @@ void Kai::Update(float delata_second)
 void Kai::Draw(const Vector2D& screen_offset) const
 {
 	__super::Draw(screen_offset);
-
-	//”»’èƒTƒCƒY•`‰æ
-	DrawBox(location.x - box_size.x, location.y - box_size.y,
-		location.x + box_size.x, location.y + box_size.y, GetColor(255, 0, 0), FALSE);
 }
 
 void Kai::Finalize()

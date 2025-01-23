@@ -2,7 +2,7 @@
 
 #include "../Objects/GameObjectManager.h"
 
-//シーンタイプ
+// シーンの種類
 enum class eSceneType
 {
 	eTitle,
@@ -11,7 +11,7 @@ enum class eSceneType
 	eXit
 };
 
-//シーンベースクラス
+// シーン基底クラス
 class SceneBase
 {
 public:

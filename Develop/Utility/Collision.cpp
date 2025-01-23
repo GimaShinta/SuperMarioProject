@@ -59,5 +59,6 @@ bool IsCheckCollision(const BoxCollision& c1, const BoxCollision& c2)
 		return true;
 	}
 
+	// 条件が1つでも合っていなかったら、ノーヒット
 	return false;
 }

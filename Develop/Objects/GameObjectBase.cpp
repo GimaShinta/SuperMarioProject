@@ -21,11 +21,15 @@ GameObjectBase::~GameObjectBase()
 {
 }
 
+// 初期化処理
 void GameObjectBase::Initialize()
 {
 }
 
-// 更新処理
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="delata_second">１フレーム当たりの時間</param>
 void GameObjectBase::Update(float delata_second)
 {
 	// ウィンドウ外オブジェクトの削除
@@ -35,11 +39,7 @@ void GameObjectBase::Update(float delata_second)
 	{
 		objm->DestroyGameObject(this);
 	}
-	if (this->location.y >= 600 + this->GetBoxSize().y)
-	{
-		objm->DestroyGameObject(this);
-	}
-	if (this->is_destroy == true)
+	if (this->location.y >= 720 + this->GetBoxSize().y)
 	{
 		objm->DestroyGameObject(this);
 	}
@@ -58,7 +58,10 @@ void GameObjectBase::Finalize()
 {
 }
 
-// ヒット時処理
+/// <summary>
+/// ヒット時処理
+/// </summary>
+/// <param name="hit_object">当たったオブジェクト</param>
 void GameObjectBase::OnHitCollision(GameObjectBase* hit_object)
 {
 }
@@ -66,7 +69,7 @@ void GameObjectBase::OnHitCollision(GameObjectBase* hit_object)
 /// <summary>
 /// アニメーション制御
 /// </summary>
-/// <param name="delta_second"></param>
+/// <param name="delta_second">１フレーム当たりの時間</param>
 /// <param name="animation_image">アニメーション総画像</param>
 /// <param name="animation_num">アニメーション順序</param>
 void GameObjectBase::AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num)
@@ -91,7 +94,11 @@ void GameObjectBase::AnimationControl(float delta_second, std::vector<int>& anim
 	}
 }
 
-// 画像の設定
+/// <summary>
+/// 画像の設定
+/// </summary>
+/// <param name="delta_second">１フレーム当たりの時間</param>
+/// <param name="animation_imag">描画したい単体画像</param>
 void GameObjectBase::AnimationControl(float delta_second, int animation_imag)
 {
 	image = animation_imag;
@@ -102,7 +109,10 @@ void GameObjectBase::SetOwnerScene(GameObjectManager* scene)
  	this->owner_scene = scene;
 }
 
-// 位置座標の設定
+/// <summary>
+/// 位置座標の設定
+/// </summary>
+/// <param name="location">設定したい位置</param>
 void GameObjectBase::SetLocation(const Vector2D& location)
 {
 	this->location = location;

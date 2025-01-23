@@ -2,6 +2,7 @@
 #include "../Singleton.h"
 #include "DxLib.h"
 
+// インスタンスの削除
 void InputManager::DeleteInstance()
 {
 	// 自クラスのポインタ（実体をアドレスの先で保有）

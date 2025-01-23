@@ -16,10 +16,11 @@ enum ePlayerLooksState
 	DESTROYMARIO
 };
 
-//プレイヤークラス
+//プレイヤークラス（メンバ関数のオーバーライド必須）
 class Player : public CharacterBase
 {
 private:
+	// マリオ画像用、状態の数だけ
 	std::vector<int> nomalmario_animation;
 	std::vector<int> s_nomalmario_animation;
 	std::vector<int> growth_animation;
@@ -34,10 +35,13 @@ public:
 	bool screen_end;
 	bool is_huge;
 	bool flip_flag;
+	bool goal;
 	Vector2D p_box_size[2];
 
 private:
 	class PlayerStateBase* state = nullptr;
+
+public:
 	ePlayerState next_state = ePlayerState::NONE;
 	ePlayerState now_state;
 	ePlayerLooksState old_state;
@@ -77,7 +81,7 @@ public:
 public:
 	void OnHitCollision(GameObjectBase* hit_object) override;
 	//アニメーション制御
-	void AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num, int n_jump, int n_squat);
+	void AnimationControl(float delta_second, std::vector<int>& animation_image, std::vector<int>& animation_num, int n_jump, int n_squat, int n_destroy);
 
 public:
 	//残り残機の取得
@@ -88,6 +92,8 @@ public:
 	void SetPowerDown();
 	//死んだ状態かを見る
 	bool GetDestroy()const;
+	// ゴールしているか
+	bool GetGoal();
 	//ステートの切り替え
 	void SetNextState(ePlayerState next_state);
 
@@ -95,5 +101,6 @@ public:
 	ePlayerState GetPlayerState() const;
 	void SetScreenEnd(bool screen_end);
 	Vector2D GetVelocity();
+	void SetObjectType(eObjectType type);
 };
 

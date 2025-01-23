@@ -10,6 +10,7 @@ GameObjectManager::~GameObjectManager()
 	Finalize();
 }
 
+// インスタンスの削除
 void GameObjectManager::DeleteInstance()
 {
 	// 自クラスのポインタ（実体をアドレスの先で保有）
@@ -28,7 +29,10 @@ void GameObjectManager::Initialize()
 {
 }
 
-//更新処理
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="delta_second">１フレーム当たりの時間</param>
 void GameObjectManager::Update(const float& delta_second)
 {
 	//生成できるオブジェクトをメイン配列に移動させる
@@ -176,7 +180,11 @@ void GameObjectManager::DestroyGameObject(GameObjectBase* target)
 	destroy_object.push_back(target);
 }
 
-//当たり判定のチェック
+/// <summary>
+/// 当たり判定のチェック
+/// </summary>
+/// <param name="target">例：プレイヤー</param>
+/// <param name="partner">例：敵</param>
 void GameObjectManager::CheckCollision(GameObjectBase* target, GameObjectBase* partner)
 {
 	// 中身が入っているかをチェック

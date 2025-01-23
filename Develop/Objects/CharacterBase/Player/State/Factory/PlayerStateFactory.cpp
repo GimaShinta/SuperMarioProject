@@ -4,11 +4,13 @@
 #include "../JumpState/JumpState.h"
 #include "../RunState/RunState.h"
 #include "../SquatState/SquatState.h"
+#include "../DestroyState/Destroy.h"
 
 #include "../../Player.h"
 
 PlayerStateFactory* factory = Singleton<PlayerStateFactory>::GetInstance();
 
+// インスタンスの削除
 void PlayerStateFactory::DeleteInstance()
 {
 	// 自クラスのポインタ（実体をアドレスの先で保有）
@@ -22,12 +24,14 @@ void PlayerStateFactory::DeleteInstance()
 	}
 }
 
+// 初期化処理
 void PlayerStateFactory::Initialize(Player& player)
 {
 	idle = new IdleState(&player);
 	jump = new JumpState(&player);
 	run = new RunState(&player);
 	squat = new SquatState(&player);
+	destroy = new DestroyState(&player);
 }
 
 PlayerStateBase* PlayerStateFactory::Get(Player& player, ePlayerState state)
@@ -57,6 +61,10 @@ PlayerStateBase* PlayerStateFactory::Get(Player& player, ePlayerState state)
 		factory->squat->Initialize();
 		ret = factory->squat;
 		break;
+	case ePlayerState::DESTROY:
+		factory->squat->Initialize();
+		ret = factory->destroy;
+		break;
 	case ePlayerState::NONE:      //返すものなし
 	default:
 		break;
@@ -65,6 +73,7 @@ PlayerStateBase* PlayerStateFactory::Get(Player& player, ePlayerState state)
 	return ret;
 }
 
+// 終了時処理
 void PlayerStateFactory::Finalize()
 {
 	//各状態クラスの終了処理
@@ -72,10 +81,12 @@ void PlayerStateFactory::Finalize()
 	factory->jump->Finalize();
 	factory->run->Finalize();
 	factory->squat->Finalize();
+	factory->destroy->Finalize();
 
 	//各状態クラスのインスタンスを削除
 	delete factory->idle;
 	delete factory->jump;
 	delete factory->run;
 	delete factory->squat;
+	delete factory->destroy;
 }

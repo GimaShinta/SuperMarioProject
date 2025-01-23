@@ -2,10 +2,11 @@
 
 #include "../SceneBase.h"
 
-//タイトルシーンクラス
+// タイトルシーンクラス
 class TitleScene : public SceneBase
 {
 private:
+	// 背景画像
 	int back_ground_image;
 
 public:

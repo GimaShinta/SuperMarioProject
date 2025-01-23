@@ -6,11 +6,15 @@
 #include <vector>
 #include <string>
 
+// オブジェクトの生成と破棄を管理するクラス
 class GameObjectManager : public Singleton<class T>
 {
 private:
+	// 生成したいオブジェクトが入る配列
 	std::vector<GameObjectBase*> create_object;
+	// 破棄したいオブジェクトが入る配列
 	std::vector<GameObjectBase*> destroy_object;
+	// インゲームに存在するオブジェクトが入る配列
 	std::vector<GameObjectBase*> game_object;
 	Vector2D screen_offset;// スクリーンオフセットはウィンドウの0,0位置からどれだけ離れているのかを判定するのに使える
 
@@ -20,31 +24,31 @@ public:
 	virtual ~GameObjectManager();
 
 public:
-	//インスタンスの削除
+	// インスタンスの削除
 	static void DeleteInstance();
 
 public:
-	//初期化処理
+	// 初期化処理
 	virtual void Initialize();
 
-	//更新処理
+	// 更新処理
 	virtual void Update(const float& delta_second);
 
-	//描画処理
+	// 描画処理
 	virtual void Draw() const;
 
-	//終了時処理
+	// 終了時処理
 	virtual void Finalize();
 
-	//生成できるオブジェクトがあるかをチェック
+	// 生成できるオブジェクトがあるかをチェック
 	virtual void CheckCreateObject();
 
-	//削除できるオブジェクトがあるかをチェック
+	// 削除できるオブジェクトがあるかをチェック
 	virtual void CheckDesroyObject();
 
 	//virtual std::vector<GameObjectBase*>& CreateGameObject();
 
-	//オブジェクトの生成
+	// オブジェクトの生成
 	template <class OBJECT>
 	OBJECT* CreateObject(const Vector2D& generate_location)
 	{
@@ -73,11 +77,11 @@ public:
 		return new_instance;
 	}
 
-	//オブジェクトを削除する
+	// オブジェクトを削除する
 	void DestroyGameObject(GameObjectBase* target);
 
 public:
-	//当たり判定のチェック
+	// 当たり判定のチェック
 	virtual void CheckCollision(GameObjectBase* target, GameObjectBase* partner);
 
 	const Vector2D GetScreenOffset() const;

@@ -10,20 +10,22 @@ class GameObjectBase
 {
 protected:
 	class GameObjectManager* owner_scene;   //
-	Vector2D location;              //
+	Vector2D location;              // 位置座標
 	BoxCollision collision;            //
 	unsigned char z_layer;          //
 
 public:
+	// 当たり判定サイズ
 	Vector2D box_size;
 
 protected:
-	int image;                      //
-	int animation_count;            //
-	float animation_time;           //
+	int image;                      // 画像用
+	int animation_count;            // 一定時間の到達数のカウント
+	float animation_time;           // アニメーションの間隔
 
 public:
 	bool is_mobility;               //
+	// 死んでいるかどうか
 	bool is_destroy;
 
 public:
@@ -31,12 +33,17 @@ public:
 	virtual ~GameObjectBase();
 
 public:
+	// 初期化処理
 	virtual void Initialize();
+	// 更新処理
 	virtual void Update(float delata_second);
+	// 描画処理
 	virtual void Draw(const Vector2D& screen_offset)const;
+	// 終了時処理
 	virtual void Finalize();
 
 public:
+	// ヒット時処理
 	virtual void OnHitCollision(GameObjectBase* hit_object);
 
 	//複数枚アニメーションの制御

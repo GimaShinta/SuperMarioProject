@@ -142,9 +142,11 @@
     <ClCompile Include="Application\Application.cpp" />
     <ClCompile Include="AppMain.cpp" />
     <ClCompile Include="Objects\BlockBase\Kai\Kai.cpp" />
+    <ClCompile Include="Objects\BlockBase\Pole\Pole.cpp" />
     <ClCompile Include="Objects\CharacterBase\EnemyBase\EnemyBase.cpp" />
     <ClCompile Include="Objects\CharacterBase\EnemyBase\Kuribo\Kuribo.cpp" />
     <ClCompile Include="Objects\CharacterBase\EnemyBase\Nokonoko\Nokonoko.cpp" />
+    <ClCompile Include="Objects\CharacterBase\Player\State\DestroyState\Destroy.cpp" />
     <ClCompile Include="Objects\CharacterBase\Player\State\JumpState\JumpState.cpp" />
     <ClCompile Include="Objects\CharacterBase\Player\State\IdelState\IdleState.cpp" />
     <ClCompile Include="Objects\CharacterBase\Fireball\Fireball.cpp" />
@@ -173,15 +175,16 @@
     <ClCompile Include="Utility\Collision.cpp" />
     <ClCompile Include="Utility\InputManager.cpp" />
     <ClCompile Include="Utility\ResourceManager.cpp" />
-    <ClCompile Include="Utility\StageData.cpp" />
     <ClCompile Include="Utility\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Application.h" />
     <ClInclude Include="Objects\BlockBase\Kai\Kai.h" />
+    <ClInclude Include="Objects\BlockBase\Pole\Pole.h" />
     <ClInclude Include="Objects\CharacterBase\EnemyBase\EnemyBase.h" />
     <ClInclude Include="Objects\CharacterBase\EnemyBase\Kuribo\Kuribo.h" />
     <ClInclude Include="Objects\CharacterBase\EnemyBase\Nokonoko\Nokonoko.h" />
+    <ClInclude Include="Objects\CharacterBase\Player\State\DestroyState\Destroy.h" />
     <ClInclude Include="Objects\CharacterBase\Player\State\Enum\PlayerState.h" />
     <ClInclude Include="Objects\CharacterBase\Player\State\JumpState\JumpState.h" />
     <ClInclude Include="Objects\CharacterBase\Player\State\IdelState\IdleState.h" />
@@ -214,7 +217,6 @@
     <ClInclude Include="Utility\Collision.h" />
     <ClInclude Include="Utility\InputManager.h" />
     <ClInclude Include="Utility\ResourceManager.h" />
-    <ClInclude Include="Utility\StageData.h" />
     <ClInclude Include="Utility\Vector2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

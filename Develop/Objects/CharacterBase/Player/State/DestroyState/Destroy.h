@@ -2,12 +2,12 @@
 
 #include "../PlayerStateBase.h"
 
-// プレイヤーの歩く状態クラス
-class RunState : public PlayerStateBase
+// プレイヤーが死ぬ状態クラス
+class DestroyState : public PlayerStateBase
 {
 public:
-	RunState(class Player* p);
-	~RunState();
+	DestroyState(class Player* p);
+	~DestroyState();
 
 public:
 	// 初期化処理
@@ -20,9 +20,8 @@ public:
 	void Finalize() override;
 
 public:
-	// 現在の見た目の状態を取得
+	// 現在の見た目状態を取得
 	ePlayerLooksState GetLooksState() const override;
-	// 現在の動きの状態を取得
+	// 現在の移動状態を取得
 	ePlayerState GetState() const override;
 };
-

@@ -3,6 +3,7 @@
 #include "../SceneBase.h"
 #include "../../Objects/GameObjectBase.h"
 
+// インゲームクラス
 class InGameScene : public SceneBase
 {
 private:
@@ -17,6 +18,7 @@ private:
 	};
 
 private:
+	// クラスポインタ変数
 	class Player* player;
 	class Kuribo* kuribo;
 	class Nokonoko* nokonoko;
@@ -27,11 +29,17 @@ private:
 	class Kai* kai;
 	class BlockBase* block;
 	class EnemyBase* enemy;
+	class PoleTop* pole_t;
+	class PoleDown* pole_d;
 
 private:
+	// オブジェクト配列
 	std::vector<BlockBase*> blocks;
 	std::vector<EnemyBase*> enemys;
 	std::vector<MapObjectData> map_object;
+
+private:
+	// 背景画像
 	std::vector<int> back_ground_images;
 
 private:
@@ -43,6 +51,9 @@ private:
 	int back_ground_mountain[6];
 	int back_ground_ha[3];
 	int back_ground_cloud[6];
+	int back_ground_dokan[4];
+	int back_ground_siro;
+	int back_ground_pole[3];
 	Vector2D screen_location;
 	Vector2D draw_location;
 	Vector2D camera_location;
@@ -78,8 +89,10 @@ private:
 	void LoadStageMapCSV();
 	// オブジェクト読込み
 	void LoadStageMapObject();
-
+	// 画像の読込み
 	void LoadImages();
+	// 背景画像の描画
+	void BackDraw();
 
 private:
 	Vector2D ChengeLocation(const Vector2D& pos);
