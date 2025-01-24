@@ -1,5 +1,6 @@
 #include "TitleScene.h"
 #include "DxLib.h"
+#include "../../Application/Application.h"
 
 #include "../../Utility/InputManager.h"
 #include "../../Utility/ResourceManager.h"
@@ -46,11 +47,9 @@ void TitleScene::Draw()
 	// 背景画像の描画
 	DrawRotaGraph(480, 360, 1.5, 0.0, back_ground_image, TRUE);
 
-	DrawString(0,0,"タイトル画面です",GetColor(255,255,255),TRUE);
-	DrawString(0,60,"スペースキーでインゲーム",GetColor(0,255,0),TRUE);
-
 	SetFontSize(48);
 	DrawString(250,450,"１　PLAYER　GAME",GetColor(255,255,255),TRUE);
+	DrawString(400,550,"SPACE",GetColor(255,255,255),TRUE);
 	SetFontSize(16);
 }
 

@@ -5,6 +5,10 @@
 // プレイヤーのジャンプ状態クラス
 class JumpState : public PlayerStateBase
 {
+private:
+	// ジャンプ音源
+	int jump_sound;
+
 public:
 	JumpState(class Player* p);
 	~JumpState();

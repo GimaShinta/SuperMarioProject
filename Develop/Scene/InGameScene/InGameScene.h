@@ -39,11 +39,18 @@ private:
 	std::vector<MapObjectData> map_object;
 
 private:
+	Vector2D screen_location;
+	Vector2D draw_location;
+	Vector2D camera_location;
+	bool screen_end;
+	bool is_scroll;
+
+private:
 	// ”wŒi‰æ‘œ
 	std::vector<int> back_ground_images;
 
 private:
-	int player_zanki;
+	// ‰æ‘œ—p•Ï”
 	int back_ground_image;
 	int back_ground_sora;
 	int back_ground_block;
@@ -54,11 +61,6 @@ private:
 	int back_ground_dokan[4];
 	int back_ground_siro;
 	int back_ground_pole[3];
-	Vector2D screen_location;
-	Vector2D draw_location;
-	Vector2D camera_location;
-	bool screen_end;
-	bool is_scroll;
 
 public:
 	InGameScene();

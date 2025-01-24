@@ -5,7 +5,11 @@
 #include "../../Utility/InputManager.h"
 #include "../../Utility/ResourceManager.h"
 
-ResultScene::ResultScene()
+int player_zanki = 3;
+
+ResultScene::ResultScene():
+	mario_image(NULL),
+	gameover_sound(NULL)
 {
 }
 
@@ -19,8 +23,17 @@ void ResultScene::Initialize()
 	// マリオ画像の読込みと初期設定
 	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
 	mario_image = rm->GetImages("Resource/Images/Mario/mario.png", 9, 9, 1, 32, 32)[0];
+	gameover_sound = rm->GetSounds("Resource/Sounds/SE_GameOver.wav");
+	destroy_sound[0] = rm->GetSounds("Resource/Sounds/SE_Touch.wav");
+	destroy_sound[1] = rm->GetSounds("Resource/Sounds/SE_Death.wav");
 
-	player_zanki = 3;
+	if (player_zanki > 0)
+	{
+		// 死ぬ音再生
+		PlaySoundMem(destroy_sound[0], DX_PLAYTYPE_NORMAL);
+		PlaySoundMem(destroy_sound[1], DX_PLAYTYPE_NORMAL);
+	}
+
 }
 
 /// <summary>
@@ -33,10 +46,23 @@ eSceneType ResultScene::Update(float delta_second)
 	//入力機能の取得
 	InputManager* input = Singleton<InputManager>::GetInstance();
 
-	//SPACEキーでタイトル画面に遷移する
-	if (input->GetKeyDown(KEY_INPUT_SPACE))
+	// 残機が0ではないとき
+	if (player_zanki > 0)
 	{
-		return eSceneType::eInGame;
+		//SPACEキーでタイトル画面に遷移する
+		if (input->GetKeyDown(KEY_INPUT_SPACE))
+		{
+			// 残機を減らす
+			player_zanki--;
+			return eSceneType::eInGame;
+		}
+	}
+	else
+	{
+		PlaySoundMem(gameover_sound, DX_PLAYTYPE_NORMAL);
+		// 残機が0になったらタイトルへ遷移
+		player_zanki = 3;
+		return eSceneType::eTitle;
 	}
 
 	//現在のシーン情報を取得
@@ -46,16 +72,17 @@ eSceneType ResultScene::Update(float delta_second)
 //描画処理
 void ResultScene::Draw()
 {
-	DrawString(0, 0, "リザルト画面です", GetColor(255, 255, 255), TRUE);
-	DrawString(0, 90, "スペースキーでリスタート", GetColor(0, 255, 0), TRUE);
 	DrawRotaGraph(D_WIN_MAX_X / 2 - ((D_OBJECT_SIZE * 2) * 1.5), D_WIN_MAX_Y / 2, 1.2, 0.0, mario_image, TRUE);
 	SetFontSize(32);
 	DrawFormatString(D_WIN_MAX_X / 2 - ((D_OBJECT_SIZE * 2) * 1), D_WIN_MAX_Y / 2 - (D_OBJECT_SIZE / 2), GetColor(255, 255, 255), " × %d", player_zanki, TRUE);
+	DrawString(340,450, "SPACE TO START", GetColor(255, 255, 255), TRUE);
+	SetFontSize(16);
 }
 
 //終了時処理
 void ResultScene::Finalize()
 {
+	// インスタンスの削除
 	InputManager::DeleteInstance();
 }
 

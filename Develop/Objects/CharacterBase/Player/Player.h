@@ -28,6 +28,16 @@ private:
 	std::vector<int> s_dekamario_animation;
 	std::vector<int> firemario_animation;
 
+private:
+	// ステージBGM
+	int back_ground_sound;
+	// ゴール音
+	int goal_sound[2];
+	// 踏むときの音
+	int step_on_sound;
+	// 死ぬ音
+	int destroy_sound[2];
+
 public:
 	int zanki;
 	int coin_count;

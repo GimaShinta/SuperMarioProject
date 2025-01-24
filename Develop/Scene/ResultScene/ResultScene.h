@@ -8,8 +8,10 @@ class ResultScene : public SceneBase
 private:
 	// マリオ画像
 	int mario_image;
-	// プレイヤー残機
-	int player_zanki;
+	// ゲームオーバー音
+	int gameover_sound;
+	// 死ぬ音
+	int destroy_sound[2];
 
 public:
 	ResultScene();

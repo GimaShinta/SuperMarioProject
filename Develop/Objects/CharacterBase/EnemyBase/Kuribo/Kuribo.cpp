@@ -48,12 +48,6 @@ void Kuribo::Draw(const Vector2D& screen_offset) const
 {
 	//親クラスの描画処理を呼び出す
 	__super::Draw(screen_offset);
-
-	DrawString(0, 150, "エネミーの描画ok", GetColor(255, 255, 255), TRUE);
-
-	//判定サイズ描画
-	//DrawBox(location.x - box_size.x, location.y - box_size.y,
-	//	location.x + box_size.x, location.y + box_size.y, GetColor(255, 0, 0), FALSE);
 }
 
 //終了時処理

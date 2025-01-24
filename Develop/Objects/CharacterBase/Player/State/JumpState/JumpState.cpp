@@ -5,6 +5,7 @@
 #include "../Enum/PlayerState.h"
 
 #include "../../../../../Utility/InputManager.h"
+#include "../../../../../Utility/ResourceManager.h"
 
 JumpState::JumpState(Player* p) :
 	PlayerStateBase(p)
@@ -19,8 +20,16 @@ JumpState::~JumpState()
 void JumpState::Initialize()
 {
 	//移動処理
-	this->player->velocity.y -= 600.0f;         //ジャンプ力
+	this->player->velocity.y -= 800.0f;         //ジャンプ力
 	old_location = 0.0f;
+
+	// インスタンスの取得
+	ResourceManager* rm = Singleton<ResourceManager>::GetInstance();
+	// ジャンプ音の読み込み
+	jump_sound = rm->GetSounds("Resource/Sounds/SE_MiniJump.wav");
+
+	// ジャンプ音再生
+	PlaySoundMem(jump_sound, DX_PLAYTYPE_BACK);
 }
 
 // 更新処理
@@ -64,15 +73,6 @@ void JumpState::Update(float delta_second)
 // 描画処理
 void JumpState::Draw() const
 {
-	//座標情報を整数値に変換
-	int x = 0, y = 0;
-	player->GetLocation().ToInt(&x, &y);
-
-	//描画
-	//DrawBox(x - (int)(player->box_size.x), y - (int)(player->box_size.y),
-	//	x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
-
-	DrawString(200, 120, "プレイヤージャンプ中", GetColor(255, 255, 255), TRUE);
 }
 
 // 終了時処理

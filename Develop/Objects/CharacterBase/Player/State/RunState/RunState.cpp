@@ -71,15 +71,6 @@ void RunState::Update(float delta_second)
 // 描画処理
 void RunState::Draw() const
 {
-	// 座標情報を整数値に変換
-	int x = 0, y = 0;
-	player->GetLocation().ToInt(&x, &y);
-
-	// 描画
-	//DrawBox(x - (int)(player->box_size.x), y - (int)(player->box_size.y),
-	//	x + (int)(player->box_size.x), y + (int)(player->box_size.y), GetColor(255, 0, 0), FALSE);
-
-	DrawString(200, 120, "プレイヤー移動中", GetColor(255, 255, 255), TRUE);
 }
 
 // 終了時処理

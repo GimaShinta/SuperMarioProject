@@ -45,6 +45,17 @@ void Player::Initialize()
 	dekamario_animation = rm->GetImages("Resource/Images/Mario/dekamario.png", 10, 10, 1, 32, 64);
 	image = nomalmario_animation[0];
 
+	// 音の読み込み
+	back_ground_sound = rm->GetSounds("Resource/Sounds/BGM_MarioGround.wav");
+	goal_sound[0] = rm->GetSounds("Resource/Sounds/SE_PoleTouch.wav");
+	goal_sound[1] = rm->GetSounds("Resource/Sounds/SE_Goal.wav");
+	step_on_sound = rm->GetSounds("Resource/Sounds/SE_StepOn.wav");
+	destroy_sound[0] = rm->GetSounds("Resource/Sounds/SE_Touch.wav");
+	destroy_sound[1] = rm->GetSounds("Resource/Sounds/SE_Death.wav");
+
+	// 音の再生
+	PlaySoundMem(back_ground_sound, DX_PLAYTYPE_BACK);
+
 	// 当たり判定のオブジェクト設定
 	collision.is_blocking = true;
 	collision.object_type = eObjectType::ePlayer;
@@ -156,11 +167,6 @@ void Player::Draw(const Vector2D& screen_offset) const
 	{
 		DrawRotaGraphF(location.x, location.y - D_OBJECT_SIZE, 1.5, 0.0, image, TRUE, flip_flag);
 	}
-
-	//親クラスの描画処理を行う
-	//__super::Draw(screen_offset);
-
-	DrawString(0, 120, "プレイヤーの描画ok", GetColor(255, 255, 255), TRUE);
 }
 
 //終了時処理
@@ -172,6 +178,9 @@ void Player::Finalize()
 	// インスタンスの削除
 	ResourceManager::DeleteInstance();
 	PlayerStateFactory::DeleteInstance();
+
+	// BGMの停止
+	StopSoundMem(back_ground_sound);
 }
 
 /// <summary>
@@ -223,8 +232,11 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 					// 左側からの衝突時の処理
 					// 死亡フラグ
 					is_destroy = true;
-					// タイプをNoneにして当たり判定を削除
-					collision.object_type = eObjectType::eNone;
+					// サウンドの再生を止める
+					StopSoundMem(back_ground_sound);
+					//// 死ぬ音再生
+					//PlaySoundMem(destroy_sound[0], DX_PLAYTYPE_NORMAL);
+					//PlaySoundMem(destroy_sound[1], DX_PLAYTYPE_BACK);
 				}
 				else
 				{
@@ -232,8 +244,11 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 					// 右側からの衝突時の処理
 					// 死亡フラグ
 					is_destroy = true;
-					// タイプをNoneにして当たり判定を削除
-					collision.object_type = eObjectType::eNone;
+					// サウンドの再生を止める
+					StopSoundMem(back_ground_sound);
+					//// 死ぬ音再生
+					//PlaySoundMem(destroy_sound[0], DX_PLAYTYPE_NORMAL);
+					//PlaySoundMem(destroy_sound[1], DX_PLAYTYPE_BACK);
 				}
 			}
 			else
@@ -244,7 +259,8 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 					// 上側から衝突
 					// 上側からの衝突時の処理
 					velocity.y -= 1250.0f;
-
+					// 音の再生
+					PlaySoundMem(step_on_sound, DX_PLAYTYPE_BACK);
 				}
 				else
 				{
@@ -252,8 +268,6 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 					// 下側からの衝突時の処理
 					// 死亡フラグ
 					is_destroy = true;
-					// タイプをNoneにして当たり判定を削除
-					collision.object_type = eObjectType::eNone;
 				}
 			}
 		}
@@ -285,6 +299,11 @@ void Player::OnHitCollision(GameObjectBase* hit_object)
 					// 左側からの衝突時の処理
 					location.x += normal.x * direction.x;
 					goal = true;
+					// サウンドの再生を止める
+					StopSoundMem(back_ground_sound);
+					//　サウンド再生
+					PlaySoundMem(goal_sound[0], DX_PLAYTYPE_NORMAL);
+					PlaySoundMem(goal_sound[1], DX_PLAYTYPE_NORMAL);
 				}
 				else
 				{

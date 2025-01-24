@@ -33,7 +33,6 @@ InGameScene::InGameScene()
 	, kuribo(nullptr)
 	, nokonoko(nullptr)
 	, fireboll(nullptr)
-	, player_zanki(0)
 	, back_ground_image(NULL)
 	, screen_location(0)
 	, screen_end(false)
@@ -96,17 +95,6 @@ eSceneType InGameScene::Update(float delta_second)
 			}
 		}
 	}
-	// 入力機能の取得
-	InputManager* input = Singleton<InputManager>::GetInstance();
-
-	// SPACEキーでインゲーム画面に遷移する
-	if (input->GetKeyDown(KEY_INPUT_P))
-	{
-		for (BlockBase* block : blocks)
-		{
-			block->SetScroll(1);
-		}
-	}
 
 	// オブジェクトブロック数の半分で、そこからさらにウィンドウに表示できるブロック数を引き、値に変換する
 	float scroll_end = -((56.0f / 2.0f) - 20.0f) * (D_OBJECT_SIZE * 2.0f);
@@ -143,17 +131,6 @@ eSceneType InGameScene::Update(float delta_second)
 		return eSceneType::eResult;
 	}
 
-	// SPACEキーでインゲーム画面に遷移する
-	if (input->GetKeyDown(KEY_INPUT_SPACE))
-	{
-		return eSceneType::eResult;
-	}
-	// Zキーでタイトルへ戻る
-	if (input->GetKeyDown(KEY_INPUT_Z))
-	{
-		return eSceneType::eTitle;
-	}
-
 	// マリオがゴールしたらタイトルに遷移
 	if (player->GetGoal() == true)
 	{
@@ -169,10 +146,6 @@ void InGameScene::Draw()
 {
 	// 背景画像の描画
 	BackDraw();
-
-	DrawString(0, 0, "インゲーム画面です", GetColor(255, 255, 255), TRUE);
-	DrawString(0, 60, "スペースキーでリザルト", GetColor(0, 255, 0), TRUE);
-	DrawString(0, 90, "Zキーでタイトル", GetColor(0, 255, 0), TRUE);
 
 	// 親クラスの描画処理を呼び出す
 	__super::Draw();
@@ -272,12 +245,12 @@ void InGameScene::LoadStageMapObject()
 			// 複数利用できるように配列で管理
 			blocks.push_back(brick);
 			break;
-		case 'I':
-			// 破壊不可ブロックの生成
-			kai = obj_m->CreateObject<Kai>(generate_location);
-			// 複数利用できるように配列で管理
-			blocks.push_back(kai);
-			break;
+		//case 'I':
+		//	// 破壊不可ブロックの生成
+		//	kai = obj_m->CreateObject<Kai>(generate_location);
+		//	// 複数利用できるように配列で管理
+		//	blocks.push_back(kai);
+		//	break;
 		case 'M':
 			// ポールトップの生成
 			pole_t = obj_m->CreateObject<PoleTop>(generate_location);
